@@ -204,7 +204,7 @@ The install scripts ask the TV which launcher owns Home and only disable one the
 
 ## The launcher
 
-A small native Android TV app (`com.gathin.tvhome`, about 280 KB installed) in plain Java with
+A small native Android TV app (`com.syahmie.stormztv`, about 280 KB installed) in plain Java with
 AndroidX RecyclerView and nothing heavier. Built for sets with 1 GB of RAM: no blur, no video, no
 network, no background services. It needs JDK 17 and Android SDK platform 34 to build; on macOS,
 `brew install openjdk@17 android-commandlinetools` and `sdkmanager "platforms;android-34" "build-tools;34.0.0"`. On Linux
@@ -212,12 +212,12 @@ the install script finds `~/Android/Sdk` and the `java` on your PATH.
 
 - **Configure** in [`config.xml`](../launcher/app/src/main/res/values/config.xml): dock order, hidden apps, the Live TV package, columns (tiles shrink from 5 up), rows under the dock, an optional VPN app for the network pill, and `reduced_motion` for TVs whose GPU cannot keep up.
 - **Themes** set the same keys plus a background colour and a wallpaper from a `config.json` pushed to the TV, no rebuild. Three ship in [`themes/`](../themes/), documented there.
-- **Language** follows the TV: English, German, Spanish, Catalan, French, Russian, Serbian (Latin), Polish, Arabic, Simplified Chinese, Thai, Turkish. Android 13+ can set it for the launcher alone: `tools/tv.py 'cmd locale set-app-locales com.gathin.tvhome --locales ca'`.
+- **Language** follows the TV: English, German, Spanish, Catalan, French, Russian, Serbian (Latin), Polish, Arabic, Simplified Chinese, Thai, Turkish. Android 13+ can set it for the launcher alone: `tools/tv.py 'cmd locale set-app-locales com.syahmie.stormztv --locales ca'`.
   Russian includes the module-card approval and management screens and the VPN-off badge.
 - **Arrange your apps from the remote**: hold OK on an app for a glass menu with **Move** and **App info**. Choose Move, carry the app with the arrows (into or out of the dock too) and press OK to put it down. The order is kept, and apps installed later join at the end.
 - **Module cards** let any TV app declare its own tile (label, caption, glow). The launcher asks you once per app, Keep hidden by default, and remembers the answer for that app's signing key and card name. Hold OK on Settings to change your mind. How to make one: [`docs/modules.md`](../docs/modules.md); the contract: [`docs/specs/card.md`](../docs/specs/card.md).
 - **Clock screensaver**: a grey analog clock, its second hand ticking in yellow-orange, with the time and date beneath. It drifts a little every minute so nothing burns in. Pick "Clock" in the TV's screensaver settings, or over ADB:
-  `tools/tv.py 'settings put secure screensaver_components com.gathin.tvhome/.ClockDream; settings put secure screensaver_enabled 1'`
+  `tools/tv.py 'settings put secure screensaver_components com.syahmie.stormztv/.ClockDream; settings put secure screensaver_enabled 1'`
 - **Remote keys**: an optional accessibility service keeps the remote's Input button working on Google TV (`INPUT_KEY_SERVICE=1` at install), another fixes sticks whose Home key sends ALL_APPS and opens Settings from the remote's gear button, even one Android does not map (`HOME_KEY_SERVICE=1`, scancodes in `config.xml`).
 - **Navigation** is deliberate: Up and Down move one row, the top buttons never fall through to tiles and Down from them returns to the dock tile you came from, the last focused app is remembered, and installing or removing an app refreshes the tiles while Home is open.
 - **Artwork**: app banners load at xhdpi or better, so low-density TV UIs do not downsample them before the focus zoom.

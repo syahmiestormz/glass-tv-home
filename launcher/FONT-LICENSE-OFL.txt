@@ -1,4 +1,5 @@
-Copyright 2021 The Outfit Project Authors (https://github.com/Outfitio/Outfit-Fonts)
+Copyright 2018 The Chakra Petch Project Authors (https://github.com/m4rc1e/Chakra-Petch)
+(Chakra Petch is Stormz TV's HUD typeface, res/font/hud_*.ttf, a Latin subset converted from @fontsource/chakra-petch.)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

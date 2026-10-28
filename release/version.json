@@ -1,7 +1,7 @@
 {
-  "versionCode": 14,
-  "versionName": "3.1.4",
-  "apkUrl": "https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-home.apk",
-  "changelog": "☕ Tambah Kad Belanja Kopi DuitNow QR (@imsomangge) dalam Popup Kemas Kini OTA\n🔄 Label Butang Candy Box Memaparkan Versi Patch Terkini (v3.1.4)\n🍎 Rekaan Dialog Apple TV-Style Minimal & Kemas",
+  "versionCode": 1,
+  "versionName": "1.0.0",
+  "apkUrl": "https://github.com/syahmiestormz/glass-tv-home/releases/latest/download/stormz-tv.apk",
+  "changelog": "Stormz TV 1.0.0: sci-fi HUD look, dock you can edit from the remote, 6 apps per row.",
   "releaseDate": "2026-10-28"
 }

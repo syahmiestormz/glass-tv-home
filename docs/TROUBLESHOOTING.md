@@ -100,9 +100,9 @@ fails on purpose and the rollback is printed instead of run.
   If the clock then jumps an hour ahead in spring, a fixed offset keeps it right:
   `tools/tv.py 'cmd alarm set-timezone GMT+03:30'`. The same applies to any country whose rules
   changed after the firmware was built.
-- **The network pill says "Wi-Fi" instead of the network name** after `pm clear com.gathin.tvhome`
+- **The network pill says "Wi-Fi" instead of the network name** after `pm clear com.syahmie.stormztv`
   or a reinstall from scratch: clearing the launcher's data also drops the location permission
-  Android 10 needs to read the SSID. `pm grant com.gathin.tvhome android.permission.ACCESS_FINE_LOCATION`
+  Android 10 needs to read the SSID. `pm grant com.syahmie.stormztv android.permission.ACCESS_FINE_LOCATION`
   (the install script does this).
 - **Home is "Select a Home app"** after `tools/restore.sh` followed by re-applying a list: disabling a
   package that also claims HOME (PatchWall on Xiaomi) makes Android drop the default. The install
@@ -129,11 +129,11 @@ tools/tv.py 'dumpsys accessibility'
 
 | Helper | Component in the enabled-services list | Key it filters |
 | --- | --- | --- |
-| Home button | `com.gathin.tvhome/.HomeKeyService` | `KEYCODE_ALL_APPS` (not an ordinary `KEYCODE_HOME`) |
-| Input button | `com.gathin.tvhome/.InputKeyService` | `KEYCODE_TV` |
+| Home button | `com.syahmie.stormztv/.HomeKeyService` | `KEYCODE_ALL_APPS` (not an ordinary `KEYCODE_HOME`) |
+| Input button | `com.syahmie.stormztv/.InputKeyService` | `KEYCODE_TV` |
 
 - **Enabled** means the component is in that user's colon-separated list (the class may be written in
-  full, `com.gathin.tvhome/com.gathin.tvhome.HomeKeyService`). Match the whole component.
+  full, `com.syahmie.stormztv/com.syahmie.stormztv.HomeKeyService`). Match the whole component.
 - **Bound** means it appears under that user's `Bound services` section of the dump (`services` on older
   builds). Give it a few seconds after enabling and read again. Labels in the dump can be translated or
   shared with other services; a line containing "Home" is not proof.

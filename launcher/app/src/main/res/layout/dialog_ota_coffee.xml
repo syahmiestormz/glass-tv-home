@@ -33,22 +33,22 @@
                 android:text="Kemas Kini Sistem &amp; Sokongan"
                 android:textColor="#FFFFFFFF"
                 android:textSize="18sp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvVersionSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Glass TV Home v3.1.4 • Enjin Auto-Update (OTA)"
+                android:text="Stormz TV • Enjin Auto-Update (OTA)"
                 android:textColor="#B3FFFFFF"
                 android:textSize="12sp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:layout_marginTop="2dp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Main Content: 2 Columns (OTA Left, Belanja Kopi Right) -->
+    <!-- Main Content: OTA controls -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                     android:text="✅ Auto-Update: Aktif (03:30 AM)"
                     android:textColor="#FFFFFFFF"
                     android:textSize="13sp"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:textStyle="bold" />
 
                 <TextView
@@ -88,7 +88,7 @@
                     android:text="Kemas kini dimuat turun dan dipasang di latar belakang tanpa mengganggu tontonan."
                     android:textColor="#99FFFFFF"
                     android:textSize="11sp"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:layout_marginTop="3dp" />
             </LinearLayout>
 
@@ -101,7 +101,7 @@
                 android:text="🔄 Semak Kemas Kini Sekarang"
                 android:textColor="#FFFFFFFF"
                 android:textSize="12.5sp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:focusable="true"
@@ -118,7 +118,7 @@
                 android:text="⏱️ Tukar Waktu Auto-Update"
                 android:textColor="#FFFFFFFF"
                 android:textSize="12.5sp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:focusable="true"
@@ -136,7 +136,7 @@
                 android:text="⚡ Matikan Auto-Update"
                 android:textColor="#FFFFFFFF"
                 android:textSize="12.5sp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:focusable="true"
@@ -146,91 +146,6 @@
                 android:nextFocusRight="@+id/btnClose" />
         </LinearLayout>
 
-        <!-- Divider Line -->
-        <View
-            android:layout_width="1dp"
-            android:layout_height="220dp"
-            android:background="#2EFFFFFF" />
-
-        <!-- Right Column: Belanja Kopi QR -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.9"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginStart="16dp">
-
-            <!-- Title & Handle -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="4dp">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_coffee"
-                    android:tint="#FFFFFFFF"
-                    android:layout_marginEnd="6dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Belanja Kopi"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/outfit"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" @imsomangge"
-                    android:textColor="#FF90B8"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/outfit"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DuitNow QR • GXBank"
-                android:textColor="#80FFFFFF"
-                android:textSize="11sp"
-                android:fontFamily="@font/outfit"
-                android:layout_marginBottom="8dp" />
-
-            <!-- QR Code Card -->
-            <ImageView
-                android:id="@+id/imgQrCoffee"
-                android:layout_width="150dp"
-                android:layout_height="185dp"
-                android:src="@drawable/qr_coffee"
-                android:scaleType="fitCenter"
-                android:contentDescription="DuitNow QR @imsomangge" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Imbas guna kamera fon / perbankan"
-                android:textColor="#B3FFFFFF"
-                android:textSize="10.5sp"
-                android:fontFamily="@font/outfit"
-                android:layout_marginTop="6dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📧 Cadangan: ahmad.anammat@me.com"
-                android:textColor="#80FFFFFF"
-                android:textSize="10sp"
-                android:fontFamily="@font/outfit"
-                android:layout_marginTop="3dp" />
-        </LinearLayout>
     </LinearLayout>
 
     <!-- Bottom Actions -->
@@ -248,7 +163,7 @@
             android:text="Tutup"
             android:textColor="#FFFFFFFF"
             android:textSize="13sp"
-            android:fontFamily="@font/outfit"
+            android:fontFamily="@font/hud"
             android:textStyle="bold"
             android:gravity="center"
             android:focusable="true"

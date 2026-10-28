@@ -44,7 +44,7 @@ if [ -z "${STOCK_LAUNCHER:-}" ]; then
   case " $KNOWN_STOCK_LAUNCHERS " in
     *" $HOME_PKG "*) STOCK_LAUNCHER=$HOME_PKG ;;
     *)
-      if [ "$HOME_PKG" = com.gathin.tvhome ]; then
+      if [ "$HOME_PKG" = com.syahmie.stormztv ]; then
         STOCK_LAUNCHER=none; echo "Home already belongs to this launcher; nothing will be disabled."
       elif [ "$HOME_PKG" = android ]; then
         # Android's chooser: two or more launchers tie and no default is set, which is where a TV lands
@@ -93,11 +93,11 @@ rollback() {
     disabled=$("$PY" -I ../tools/tv.py 'pm list packages -d' 2>/dev/null | tr -d '\r' | sed 's/^package://') || true
     for k in $KNOWN_STOCK_LAUNCHERS; do printf '%s\n' "$disabled" | grep -qx "$k" && restore="$restore $k"; done
   fi
-  local cmds="pm uninstall com.gathin.tvhome"
+  local cmds="pm uninstall com.syahmie.stormztv"
   for k in $restore; do cmds="$cmds
 pm enable --user 0 $k"; done
   case "$ORIG_HOME" in
-    com.gathin.tvhome/*|android|"") ;;
+    com.syahmie.stormztv/*|android|"") ;;
     */*) cmds="$cmds
 cmd package set-home-activity --user 0 $ORIG_HOME" ;;
   esac
@@ -117,9 +117,9 @@ trap 'st=$?; [ $st -ne 0 ] && rollback; exit $st' EXIT
 healthy() {
   [ "${SAFEGUARD_TEST:-}" = "$1" ] && return 1
   local s p1 p2 f
-  s=$("$PY" -I ../tools/tv.py 'sleep 4; a=$(pidof com.gathin.tvhome); sleep 3; b=$(pidof com.gathin.tvhome); f=$(dumpsys window 2>/dev/null | grep -m1 mCurrentFocus); echo "$a|$b|$f"' | tail -n 1 | tr -d '\r') || return 1
+  s=$("$PY" -I ../tools/tv.py 'sleep 4; a=$(pidof com.syahmie.stormztv); sleep 3; b=$(pidof com.syahmie.stormztv); f=$(dumpsys window 2>/dev/null | grep -m1 mCurrentFocus); echo "$a|$b|$f"' | tail -n 1 | tr -d '\r') || return 1
   p1=${s%%|*}; s=${s#*|}; p2=${s%%|*}; f=${s#*|}
-  [ -n "$p1" ] && [ "$p1" = "$p2" ] && case "$f" in *com.gathin.tvhome*) return 0 ;; *) return 1 ;; esac
+  [ -n "$p1" ] && [ "$p1" = "$p2" ] && case "$f" in *com.syahmie.stormztv*) return 0 ;; *) return 1 ;; esac
 }
 "$PY" -I ../tools/b64push.py "$APK" /data/local/tmp/tvhome.apk
 # Install on its own: in the batch below a failed install (e.g. "not enough space" on a full /data)
@@ -132,9 +132,9 @@ case "$OUT" in
 esac
 ARMED=1
 printf '%s\n' \
-  "pm grant com.gathin.tvhome android.permission.ACCESS_FINE_LOCATION 2>/dev/null; echo location-granted" \
-  "cmd package compile -m speed -f com.gathin.tvhome" \
-  "am start -W -n com.gathin.tvhome/.MainActivity | grep -E '^(Status|Error)'" \
+  "pm grant com.syahmie.stormztv android.permission.ACCESS_FINE_LOCATION 2>/dev/null; echo location-granted" \
+  "cmd package compile -m speed -f com.syahmie.stormztv" \
+  "am start -W -n com.syahmie.stormztv/.MainActivity | grep -E '^(Status|Error)'" \
   | "$PY" -I ../tools/tv.py --batch
 # Check it really runs on this TV before the TV's own launcher is touched.
 if ! healthy start; then
@@ -143,7 +143,7 @@ if ! healthy start; then
 fi
 printf '%s\n' \
   "$DISABLE_STOCK" \
-  "cmd package set-home-activity --user 0 com.gathin.tvhome/.MainActivity" \
+  "cmd package set-home-activity --user 0 com.syahmie.stormztv/.MainActivity" \
   | "$PY" -I ../tools/tv.py --batch
 # Order matters: the new launcher is started before the stock one is disabled, and the home
 # preference is set after. Android drops the preference whenever the set of HOME apps changes, and
@@ -152,7 +152,7 @@ printf '%s\n' \
 # stock launcher back if it is not ours.
 HOME_NOW=$("$PY" -I ../tools/tv.py 'cmd package resolve-activity --brief -c android.intent.category.HOME -a android.intent.action.MAIN' | tail -n 1 | tr -d '\r')
 case "$HOME_NOW" in
-  com.gathin.tvhome/*) echo "Home now resolves to $HOME_NOW" ;;
+  com.syahmie.stormztv/*) echo "Home now resolves to $HOME_NOW" ;;
   *)
     echo "ERROR: Home resolves to ${HOME_NOW:-nothing}, not to the new launcher." >&2
     echo "On Google TV this usually means com.google.android.tungsten.setupwraith also claims Home: add it to" >&2
@@ -174,7 +174,7 @@ ARMED=0
 #   HOME_KEY_SERVICE=1    remotes whose Home button sends KEYCODE_ALL_APPS instead of HOME, e.g. Xiaomi
 #                         sticks: the key is routed to the launcher (HomeKeyService)
 enable_service() {   # appends to enabled_accessibility_services without dropping other services
-  svc=com.gathin.tvhome/.$1
+  svc=com.syahmie.stormztv/.$1
   "$PY" -I ../tools/tv.py "s=\$(settings get secure enabled_accessibility_services); case \"\$s\" in *$1*) ;; null|'') settings put secure enabled_accessibility_services $svc ;; *) settings put secure enabled_accessibility_services \"\$s:$svc\" ;; esac; settings put secure accessibility_enabled 1; echo $1 enabled"
 }
 if [ "${INPUT_KEY_SERVICE:-0}" = 1 ]; then enable_service InputKeyService; fi

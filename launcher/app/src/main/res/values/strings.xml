@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Home</string>
+    <string name="app_name">Stormz TV</string>
     <string name="inputs">Inputs</string>
     <string name="wifi">Wi-Fi</string>
     <string name="settings">Settings</string>
@@ -44,4 +44,10 @@
     <string name="card_state_new_label">New name</string>
     <string name="tile_move">Move</string>
     <string name="tile_app_info">App info</string>
+    <string name="dock_add">Add to dock</string>
+    <string name="dock_remove">Remove from dock</string>
+    <string name="dock_add_slot">Add app</string>
+    <string name="dock_pick_title">Add an app to the dock</string>
+    <string name="dock_full">The dock is full. Hold OK on a dock app and choose Remove from dock first.</string>
+    <string name="dock_nothing_to_add">Every app is already in the dock.</string>
 </resources>

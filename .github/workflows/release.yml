@@ -1,0 +1,91 @@
+name: Release
+
+# Push a tag like v1.0.1 (after bumping versionCode/versionName in launcher/app/build.gradle) and this
+# builds both APKs signed with your own key, then publishes a GitHub Release with:
+#   stormz-tv.apk            the TV launcher
+#   stormz-tv-installer.apk  the phone installer
+#   version.json             what the launcher's OTA update check reads
+# The launcher checks https://github.com/<you>/glass-tv-home/releases/latest/download/version.json.
+#
+# Repository secrets it needs (Settings → Secrets and variables → Actions):
+#   STORMZ_KEYSTORE_B64       the release keystore, base64 encoded
+#   STORMZ_KEYSTORE_PASSWORD  its password
+#   STORMZ_KEY_ALIAS          the key alias (optional, default "stormz")
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platforms;android-34 build-tools;34.0.0
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Release key
+        env:
+          KEYSTORE_B64: ${{ secrets.STORMZ_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::Add the STORMZ_KEYSTORE_B64 secret first: without one fixed key, OTA updates cannot install over each other."
+            exit 1
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/stormz.jks"
+          echo "STORMZ_KEYSTORE=$RUNNER_TEMP/stormz.jks" >> "$GITHUB_ENV"
+
+      - name: Build launcher and installer
+        working-directory: launcher
+        env:
+          STORMZ_KEYSTORE_PASSWORD: ${{ secrets.STORMZ_KEYSTORE_PASSWORD }}
+          STORMZ_KEY_ALIAS: ${{ secrets.STORMZ_KEY_ALIAS }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:testReleaseUnitTest :app:assembleRelease
+          mkdir -p installer/src/main/assets
+          cp app/build/outputs/apk/release/app-release.apk installer/src/main/assets/stormz-tv.apk
+          ./gradlew --no-daemon :installer:assembleRelease
+          mkdir -p ../dist
+          cp app/build/outputs/apk/release/app-release.apk ../dist/stormz-tv.apk
+          cp installer/build/outputs/apk/release/installer-release.apk ../dist/stormz-tv-installer.apk
+
+      - name: version.json for the OTA check
+        env:
+          REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          code=$(grep -m1 -oP "versionCode\s+\K[0-9]+" launcher/app/build.gradle)
+          name=$(grep -m1 -oP "versionName\s+'\K[^']+" launcher/app/build.gradle)
+          notes=$(git tag -l --format='%(contents)' "$TAG" | head -c 2000)
+          [ -n "$notes" ] || notes="Stormz TV $name"
+          python3 - "$code" "$name" "$REPO" "$notes" > dist/version.json <<'PY'
+          import json, sys, datetime
+          code, name, repo, notes = sys.argv[1:5]
+          print(json.dumps({
+              "versionCode": int(code),
+              "versionName": name,
+              "apkUrl": f"https://github.com/{repo}/releases/latest/download/stormz-tv.apk",
+              "changelog": notes.strip(),
+              "releaseDate": datetime.date.today().isoformat(),
+          }, ensure_ascii=False, indent=2))
+          PY
+          cat dist/version.json
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" dist/stormz-tv.apk dist/stormz-tv-installer.apk dist/version.json \
+            --title "Stormz TV $TAG" --notes-file <(python3 -c "import json;print(json.load(open('dist/version.json'))['changelog'])") \
+            --latest

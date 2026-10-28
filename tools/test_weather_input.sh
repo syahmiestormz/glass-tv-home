@@ -21,5 +21,5 @@ PY="$TOOLS/venv/bin/python"
 
 echo "⚡ Menghantar data input cuaca: '$CONDITION' ke TV ($TV_HOST)..."
 export TV_HOST="$TV_HOST"
-"$PY" -I "$TOOLS/tv.py" "am broadcast -a com.gathin.tvhome.SET_WEATHER -p com.gathin.tvhome --es condition '$CONDITION'"
+"$PY" -I "$TOOLS/tv.py" "am broadcast -a com.syahmie.stormztv.SET_WEATHER -p com.syahmie.stormztv --es condition '$CONDITION'"
 echo "✅ Selesai! Sila lihat paparan skrin TV anda."

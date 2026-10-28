@@ -9,7 +9,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_update"
-        android:label="Glass TV Installer"
+        android:label="Stormz TV Installer"
         android:roundIcon="@drawable/ic_update"
         android:supportsRtl="true"
         android:theme="@style/Theme.Installer">

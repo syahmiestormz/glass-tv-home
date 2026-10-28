@@ -79,7 +79,7 @@ Jika anda **tidak mempunyai telefon pintar Android** (contohnya hanya ada laptop
    ```bash
    adb connect <ALAMAT_IP_TV>:5555
    adb install -r release/glass-tv-home.apk
-   adb shell am start -n com.gathin.tvhome/.MainActivity
+   adb shell am start -n com.syahmie.stormztv/.MainActivity
    ```
 
 ---
@@ -128,7 +128,7 @@ AI akan menyambung ke TV melalui Wi-Fi, memasang kemas kini (`adb install -r`), 
 > 
 > Selepas bersambung ke TV, AI boleh pasang terus APK rasmi sedia ada dari `release/glass-tv-home.apk` atau compile APK baharu, jalankan debloat, dan tetapkan lokasi pengguna via:
 > ```bash
-> adb shell am broadcast -a com.gathin.tvhome.SET_LOCATION -p com.gathin.tvhome --es query "<NAMA_LOKASI>"
+> adb shell am broadcast -a com.syahmie.stormztv.SET_LOCATION -p com.syahmie.stormztv --es query "<NAMA_LOKASI>"
 > ```
 > *(Jika pengguna tidak menyatakan lokasi, sistem akan menggunakan lokasi lalai: **Putrajaya** / Stesen CA17W).*
 

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.gathin.tvhome.installer'
+    namespace 'com.syahmie.stormztv.installer'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.gathin.tvhome.installer'
+        applicationId 'com.syahmie.stormztv.installer'
         minSdk 24
         targetSdk 34
         versionCode 1
@@ -19,6 +19,11 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.debug
         }
+    }
+
+    // The launcher APK is bundled in assets and opened with openFd(), which needs it stored uncompressed.
+    androidResources {
+        noCompress 'apk'
     }
 
     compileOptions {

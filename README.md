@@ -1,43 +1,42 @@
-# Glass TV
+# Stormz TV
 
-**Make your Android TV or Google TV fast and ad-free again: strip out the bloat and ads, free up memory,
-and come home to just your apps, with a new place to visit behind them every week.**
+**A sci-fi HUD home screen for Android TV and Google TV boxes, built for speed on cheap 2 GB boxes like the
+onn. 4K.** Strip out the bloat and ads, free up memory, and come home to just your apps.
 
-<p align="center">
-  <img src="docs/screenshots/glass_tv_os_showcase_poster.jpg" width="100%" alt="Glass TV OS Presentation Poster">
-</p>
+Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-home), itself based on
+[Clean Your TV](https://github.com/Gathin23/cleanyourtv) by Gathin (MIT). What's different here:
 
-<p align="center">
-  <a href="https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-home.apk">
-    <img src="https://img.shields.io/badge/Download_TV_Launcher-glass--tv--home.apk_(730_KB)-success?style=for-the-badge&logo=android" alt="Download Glass TV Home">
-  </a>
-  &nbsp;
-  <a href="https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-installer.apk">
-    <img src="https://img.shields.io/badge/Download_Phone_Installer-glass--tv--installer.apk_(5.2_MB)-007ACC?style=for-the-badge&logo=android" alt="Download Glass TV Installer">
-  </a>
-</p>
+- **Sci-fi HUD look** instead of frosted glass: deep navy panels, cyan rims, targeting brackets around the
+  selected app, an instrument-style dock, a faint grid over the wallpaper, and the Chakra Petch typeface.
+  Plain fills and strokes, no live blur, so it is lighter on weak GPUs.
+- **A dock you edit from the remote**: 6 slots. Hold OK on any app → **Add to dock** / **Remove from dock**,
+  or press OK on an empty **+** slot to pick an app. Move dock apps along the dock with hold OK → Move.
+- **6 apps per row**, reduced motion on by default.
+- **Your own updates**: the in-app OTA check reads this repository's latest GitHub Release.
+- **Safer phone installer**: every phone makes its own ADB key (the original shipped one shared key).
+- **onn. 4K speed-up guide**: [devices/onn-4k-google-tv](devices/onn-4k-google-tv/README.md).
 
-> 📦 **Official APK Downloads**:
-> - 📺 **Android TV / Google TV Launcher**: [**`release/glass-tv-home.apk`**](https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-home.apk) (**v3.1.4** • ~730 KB)
-> - 📱 **Phone / Tablet Companion Installer**: [**`release/glass-tv-installer.apk`**](https://github.com/aqmangge/glass-tv-home/raw/main/release/glass-tv-installer.apk) (**v1.0.0** • ~5.2 MB) — Install directly to your TV over Wi-Fi without any PC!
->
-> 🎨 **Interactive Design Presentation Poster**: Open [`docs/poster.html`](docs/poster.html) in any browser for the complete UI/UX specifications, design tokens, and printable poster deck.
->
-> 📖 **User Guides / Panduan Pengguna**:
-> - 🇬🇧 **English User Guide**: Complete beginner walkthrough, 1-line AI setup, remote navigation, phone setup & FAQ in [USER_GUIDE.md](USER_GUIDE.md).
-> - 🇲🇾 **Panduan Bahasa Melayu**: Panduan lengkap langkah demi langkah untuk pengguna baru di [PANDUAN_PENGGUNA.md](PANDUAN_PENGGUNA.md).
+## Download
 
-Glass TV debloats any Android TV or Google TV over Wi-Fi, with no root and nothing that can't be undone, then
-swaps the ad-filled home screen for a light one in frosted glass, with a new set of places behind your apps
-every week.
+Get `stormz-tv.apk` (TV) and `stormz-tv-installer.apk` (phone) from the
+[latest release](https://github.com/syahmiestormz/glass-tv-home/releases/latest). Every push to `main` also
+builds both: open the run under **Actions → CI** and download **stormz-tv-apks**.
 
-<p align="center">
-  <img src="docs/screenshots/home-live.png" width="19%" alt="Live Home Screen">
-  <img src="docs/screenshots/weather-live.png" width="19%" alt="Apple Weather Bento Dashboard">
-  <img src="docs/screenshots/azan-popup-live.png" width="19%" alt="16:9 Azan Floating Settings">
-  <img src="docs/screenshots/screensaver-live.png" width="19%" alt="StandBy Screensaver">
-  <img src="docs/screenshots/wallpaper-dialog-live.png" width="19%" alt="4K Wallpapers & Phone QR Upload">
-</p>
+## Releasing an update
+
+1. Bump `versionCode` (by 1) and `versionName` in `launcher/app/build.gradle`.
+2. Commit, then tag and push: `git tag -a v1.0.1 -m "What changed"` and `git push origin main v1.0.1`.
+3. The **Release** workflow builds both APKs signed with your key and publishes them with `version.json`;
+   boxes running Stormz TV see the update under Settings → Check for Updates.
+
+The Release workflow needs three repository secrets, set once: `STORMZ_KEYSTORE_B64`,
+`STORMZ_KEYSTORE_PASSWORD`, `STORMZ_KEY_ALIAS` (`stormz`). Keep the keystore file safe: lose it and boxes
+can only get new versions by uninstalling first.
+
+---
+
+*The rest of this page is the original Glass TV documentation. Where it says Glass TV, `com.gathin.tvhome`
+or `aqmangge/glass-tv-home`, read Stormz TV, `com.syahmie.stormztv` and `syahmiestormz/glass-tv-home`.*
 
 ## What you get
 
@@ -162,13 +161,13 @@ update patch latest glass tv dekat tv rumah saya: https://github.com/aqmangge/gl
 > When a user requests to update/patch Glass TV:
 > 1. Connect to the TV over Wi-Fi (`adb connect <TV_IP>:5555`).
 > 2. Install the latest prebuilt APK without wiping user data (`adb install -r release/glass-tv-home.apk`).
-> 3. Relaunch the launcher (`adb shell am start -n com.gathin.tvhome/.MainActivity`).
+> 3. Relaunch the launcher (`adb shell am start -n com.syahmie.stormztv/.MainActivity`).
 > 4. All personal wallpapers, dock orders, and settings are 100% retained!
 
 > 🚨 **AI Assistant Rule / Arahan Khas AI**:
 > When installing for a user, the AI **must ask the user for their location in Malaysia** (e.g. Putrajaya, Cheras, Shah Alam, Melaka, JB, Penang, Kuantan, Kuching, KK) to configure live JAS haze/IPU data and JAKIM prayer times via:
 > ```bash
-> adb shell am broadcast -a com.gathin.tvhome.SET_LOCATION -p com.gathin.tvhome --es query "<LOCATION>"
+> adb shell am broadcast -a com.syahmie.stormztv.SET_LOCATION -p com.syahmie.stormztv --es query "<LOCATION>"
 > ```
 > If installed manually without AI, users can change the station at any time directly on the TV using the remote control under **Settings (⚙️) $\rightarrow$ Location API Haze** or **Weather Dashboard $\rightarrow$ 📍 Tukar Stesen / Change**.
 
@@ -229,7 +228,7 @@ online.
 
 - Built on [CleanYourTV](https://github.com/Gathin23/cleanyourtv) © 2026 Gathin, MIT licence — see
   [LICENSE](LICENSE). Its debloat lists, tools and launcher are the foundation of this project.
-- The Outfit typeface is under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
+- The Chakra Petch typeface (Stormz TV's HUD font) is under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
 - The Inputs icon is from Google's Material Icons (Apache 2.0).
 - Pictures of places and their captions are Bing's daily images (Microsoft). The launcher fetches them on your
   own TV; the promo pictures above show three of them.

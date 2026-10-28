@@ -3,15 +3,30 @@ plugins {
 }
 
 android {
-    namespace 'com.gathin.tvhome'
+    namespace 'com.syahmie.stormztv'
     compileSdk 34
 
     defaultConfig {
-        applicationId 'com.gathin.tvhome'
+        applicationId 'com.syahmie.stormztv'
         minSdk 26
         targetSdk 34
-        versionCode 14
-        versionName '3.1.4'
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    // Release signing: CI passes a fixed keystore through environment variables (see .github/workflows),
+    // so every build carries the same key and OTA updates install over each other. Without them
+    // (a local build) it falls back to the debug key.
+    signingConfigs {
+        stormz {
+            def ks = System.getenv('STORMZ_KEYSTORE')
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('STORMZ_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('STORMZ_KEY_ALIAS') ?: 'stormz'
+                keyPassword System.getenv('STORMZ_KEY_PASSWORD') ?: System.getenv('STORMZ_KEYSTORE_PASSWORD')
+            }
+        }
     }
 
     buildTypes {
@@ -20,8 +35,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // Sideloaded over ADB, never published: sign with the debug key so it installs over a debug build.
-            signingConfig signingConfigs.debug
+            signingConfig System.getenv('STORMZ_KEYSTORE') ? signingConfigs.stormz : signingConfigs.debug
         }
     }
 

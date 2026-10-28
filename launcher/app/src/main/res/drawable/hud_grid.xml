@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The HUD's faint cyan grid and scanlines over the wallpaper. One tiled bitmap: cheap to draw.
+     Turn it off with hud_grid in values/config.xml. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/hud_grid_tile"
+    android:tileMode="repeat"
+    android:antialias="false"
+    android:filter="false" />

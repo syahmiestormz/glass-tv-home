@@ -113,8 +113,8 @@
             android:name=".LocationBroadcastReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.gathin.tvhome.SET_LOCATION" />
-                <action android:name="com.gathin.tvhome.SET_WEATHER" />
+                <action android:name="com.syahmie.stormztv.SET_LOCATION" />
+                <action android:name="com.syahmie.stormztv.SET_WEATHER" />
             </intent-filter>
         </receiver>
 
@@ -154,7 +154,7 @@
         </service>
 
         <!-- Screensaver: pick it in Settings, or `settings put secure screensaver_components
-             com.gathin.tvhome/.ClockDream` over adb. -->
+             com.syahmie.stormztv/.ClockDream` over adb. -->
         <service
             android:name=".ClockDream"
             android:label="@string/dream_name"
@@ -182,7 +182,7 @@
 
         <service
             android:name=".MediaNotificationListener"
-            android:label="Glass TV Media Listener"
+            android:label="Stormz TV Media Listener"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>

@@ -43,9 +43,23 @@ jobs:
         working-directory: launcher
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon testReleaseUnitTest assembleRelease
+          ./gradlew --no-daemon :app:testReleaseUnitTest :app:assembleRelease
       - name: The launcher stays small
         run: |
           size=$(stat -c %s launcher/app/build/outputs/apk/release/app-release.apk)
           echo "release APK: $((size / 1024)) KB"
-          test "$size" -lt 409600 || { echo "APK is over 400 KB; the launcher targets 1 GB TVs, keep it small"; exit 1; }
+          test "$size" -lt 1048576 || { echo "APK is over 1 MB; the launcher targets 2 GB boxes, keep it small"; exit 1; }
+      - name: Phone installer (bundles this launcher build)
+        working-directory: launcher
+        run: |
+          mkdir -p installer/src/main/assets
+          cp app/build/outputs/apk/release/app-release.apk installer/src/main/assets/stormz-tv.apk
+          ./gradlew --no-daemon :installer:assembleRelease
+      - name: Keep the APKs (download them from this run's Summary page)
+        uses: actions/upload-artifact@v4
+        with:
+          name: stormz-tv-apks
+          path: |
+            launcher/app/build/outputs/apk/release/app-release.apk
+            launcher/installer/build/outputs/apk/release/installer-release.apk
+          retention-days: 30

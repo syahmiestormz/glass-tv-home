@@ -20,3 +20,9 @@ crop_*.jpg
 *_crop.png
 test_*.png
 restore_my_box.sh
+
+# Built by CI and copied in before the installer is built
+launcher/installer/build/
+launcher/installer/src/main/assets/stormz-tv.apk
+*.jks
+*.keystore

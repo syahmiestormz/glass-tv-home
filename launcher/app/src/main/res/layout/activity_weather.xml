@@ -6,7 +6,7 @@
     android:clipChildren="false">
 
     <!-- Layer 0: Hardware-Accelerated Dynamic Atmospheric Weather Canvas -->
-    <com.gathin.tvhome.WeatherBackgroundView
+    <com.syahmie.stormztv.WeatherBackgroundView
         android:id="@+id/weatherBgView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -43,7 +43,7 @@
                     android:id="@+id/weatherSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:fontVariationSettings="'wght' 600"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -58,7 +58,7 @@
                     android:id="@+id/weatherLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:fontVariationSettings="'wght' 700"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -75,7 +75,7 @@
                     android:id="@+id/weatherMainTemp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:fontVariationSettings="'wght' 700"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -92,7 +92,7 @@
                     android:id="@+id/weatherMainCondition"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:fontVariationSettings="'wght' 600"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -110,7 +110,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="1dp"
-                    android:fontFamily="@font/outfit"
+                    android:fontFamily="@font/hud"
                     android:fontVariationSettings="'wght' 500"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -167,7 +167,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -176,7 +176,7 @@
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
-                            <com.gathin.tvhome.WindCompassView
+                            <com.syahmie.stormztv.WindCompassView
                                 android:id="@+id/windCompassView"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
@@ -195,7 +195,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -204,7 +204,7 @@
                                 android:textColor="#94A3B8"
                                 android:textSize="9sp" />
 
-                            <com.gathin.tvhome.MoonPhaseView
+                            <com.syahmie.stormztv.MoonPhaseView
                                 android:id="@+id/moonPhaseView"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
@@ -232,7 +232,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -245,14 +245,14 @@
                                 android:id="@+id/sunsetText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:text="6:57 PM"
                                 android:textColor="#FFFFFF"
                                 android:textSize="13sp" />
 
-                            <com.gathin.tvhome.SunArcView
+                            <com.syahmie.stormztv.SunArcView
                                 android:id="@+id/sunArcView"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
@@ -271,7 +271,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -290,7 +290,7 @@
                                     android:id="@+id/uvValText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/outfit"
+                                    android:fontFamily="@font/hud"
                                     android:fontVariationSettings="'wght' 700"
                                     android:includeFontPadding="false"
                                     android:text="6"
@@ -302,7 +302,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="5dp"
-                                    android:fontFamily="@font/outfit"
+                                    android:fontFamily="@font/hud"
                                     android:fontVariationSettings="'wght' 600"
                                     android:includeFontPadding="false"
                                     android:text="High"
@@ -310,7 +310,7 @@
                                     android:textSize="10sp" />
                             </LinearLayout>
 
-                            <com.gathin.tvhome.AqiSpectrumBarView
+                            <com.syahmie.stormztv.AqiSpectrumBarView
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
                                 android:layout_marginTop="2dp" />
@@ -320,7 +320,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
@@ -351,7 +351,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -364,7 +364,7 @@
                                 android:id="@+id/feelsLikeVal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:text="30°"
@@ -376,7 +376,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:maxLines="2"
@@ -398,7 +398,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -417,7 +417,7 @@
                                     android:id="@+id/aqiValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/outfit"
+                                    android:fontFamily="@font/hud"
                                     android:fontVariationSettings="'wght' 700"
                                     android:includeFontPadding="false"
                                     android:text="56"
@@ -429,7 +429,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="5dp"
-                                    android:fontFamily="@font/outfit"
+                                    android:fontFamily="@font/hud"
                                     android:fontVariationSettings="'wght' 600"
                                     android:includeFontPadding="false"
                                     android:text="Moderate"
@@ -437,7 +437,7 @@
                                     android:textSize="10sp" />
                             </LinearLayout>
 
-                            <com.gathin.tvhome.AqiSpectrumBarView
+                            <com.syahmie.stormztv.AqiSpectrumBarView
                                 android:id="@+id/aqiBar"
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
@@ -449,7 +449,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
@@ -479,7 +479,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -491,7 +491,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:text="13 mm"
@@ -503,7 +503,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
@@ -525,7 +525,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -537,7 +537,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:text="12 km"
@@ -549,7 +549,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
                                 android:ellipsize="end"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 400"
                                 android:includeFontPadding="false"
                                 android:singleLine="true"
@@ -591,7 +591,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:text="Conditions"
@@ -602,7 +602,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 500"
                                 android:includeFontPadding="false"
                                 android:text="Temperature (°C)"
@@ -702,7 +702,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/outfit"
+                                android:fontFamily="@font/hud"
                                 android:fontVariationSettings="'wght' 700"
                                 android:includeFontPadding="false"
                                 android:letterSpacing="0.08"
@@ -744,7 +744,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="@font/outfit"
+                                    android:fontFamily="@font/hud"
                                     android:fontVariationSettings="'wght' 700"
                                     android:includeFontPadding="false"
                                     android:letterSpacing="0.08"
@@ -753,7 +753,7 @@
                                     android:textColor="#94A3B8"
                                     android:textSize="10sp" />
 
-                                <com.gathin.tvhome.RadarMapView
+                                <com.syahmie.stormztv.RadarMapView
                                     android:id="@+id/radarMapView"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -781,7 +781,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/outfit"
+                                        android:fontFamily="@font/hud"
                                         android:fontVariationSettings="'wght' 700"
                                         android:includeFontPadding="false"
                                         android:letterSpacing="0.08"
@@ -794,7 +794,7 @@
                                         android:id="@+id/humidityValText"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/outfit"
+                                        android:fontFamily="@font/hud"
                                         android:fontVariationSettings="'wght' 700"
                                         android:includeFontPadding="false"
                                         android:text="79%"
@@ -806,7 +806,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="1dp"
                                         android:ellipsize="end"
-                                        android:fontFamily="@font/outfit"
+                                        android:fontFamily="@font/hud"
                                         android:fontVariationSettings="'wght' 400"
                                         android:includeFontPadding="false"
                                         android:singleLine="true"
@@ -828,7 +828,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="@font/outfit"
+                                        android:fontFamily="@font/hud"
                                         android:fontVariationSettings="'wght' 700"
                                         android:includeFontPadding="false"
                                         android:letterSpacing="0.08"
@@ -837,7 +837,7 @@
                                         android:textColor="#94A3B8"
                                         android:textSize="9sp" />
 
-                                    <com.gathin.tvhome.PressureGaugeView
+                                    <com.syahmie.stormztv.PressureGaugeView
                                         android:id="@+id/pressureGaugeView"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent" />
@@ -854,7 +854,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:fontVariationSettings="'wght' 400"
                 android:gravity="center"
                 android:letterSpacing="0.04"

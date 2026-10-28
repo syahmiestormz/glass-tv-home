@@ -51,7 +51,7 @@ if (-not $StockLauncher) {
     if ($LASTEXITCODE -ne 0 -or -not $homePkg) { throw 'could not ask the TV which launcher owns Home; check -TvHost and the debugging prompt, or pass -StockLauncher <package>' }
     $homePkg = "$homePkg".Trim().Split('/')[0]
     if ($knownStock -contains $homePkg) { $StockLauncher = $homePkg }
-    elseif ($homePkg -eq 'com.gathin.tvhome') { $StockLauncher = 'none'; Write-Host 'Home already belongs to this launcher; nothing will be disabled.' }
+    elseif ($homePkg -eq 'com.syahmie.stormztv') { $StockLauncher = 'none'; Write-Host 'Home already belongs to this launcher; nothing will be disabled.' }
     elseif ($homePkg -eq 'android') {
         # Android's chooser: launchers tie and no default is set (a restore followed by a re-applied list
         # ends here). Take the one known stock launcher among the HOME claimants, if there is exactly one.
@@ -77,8 +77,8 @@ function Restore-Tv {
         $disabled = @(& $py -I ..\tools\tv.py 'pm list packages -d' | ForEach-Object { "$_".Trim() -replace '^package:', '' })
         $restore = @($knownStock | Where-Object { $disabled -contains $_ })
     }
-    $cmds = @('pm uninstall com.gathin.tvhome') + ($restore | ForEach-Object { "pm enable --user 0 $_" })
-    if ($origHome -match '/' -and $origHome -notlike 'com.gathin.tvhome/*') { $cmds += "cmd package set-home-activity --user 0 $origHome" }
+    $cmds = @('pm uninstall com.syahmie.stormztv') + ($restore | ForEach-Object { "pm enable --user 0 $_" })
+    if ($origHome -match '/' -and $origHome -notlike 'com.syahmie.stormztv/*') { $cmds += "cmd package set-home-activity --user 0 $origHome" }
     $cmds += 'input keyevent KEYCODE_HOME'
     if ($env:SAFEGUARD_TEST) { Write-Host "SAFEGUARD_TEST: would run on the TV:`n$($cmds -join "`n")"; return }
     try {
@@ -92,9 +92,9 @@ function Restore-Tv {
 function Test-Healthy([string]$Stage) {
     if ($env:SAFEGUARD_TEST -eq $Stage) { return $false }
     # Sent on stdin: Windows PowerShell 5.1 drops the inner double quotes from native arguments (#4).
-    $s = "$('sleep 4; a=$(pidof com.gathin.tvhome); sleep 3; b=$(pidof com.gathin.tvhome); f=$(dumpsys window 2>/dev/null | grep -m1 mCurrentFocus); echo "$a|$b|$f"' | & $py -I ..\tools\tv.py --batch | Select-Object -Last 1)".Trim()
+    $s = "$('sleep 4; a=$(pidof com.syahmie.stormztv); sleep 3; b=$(pidof com.syahmie.stormztv); f=$(dumpsys window 2>/dev/null | grep -m1 mCurrentFocus); echo "$a|$b|$f"' | & $py -I ..\tools\tv.py --batch | Select-Object -Last 1)".Trim()
     $p = $s.Split('|', 3)
-    return ($p.Count -eq 3 -and $p[0] -and $p[0] -eq $p[1] -and $p[2] -like '*com.gathin.tvhome*')
+    return ($p.Count -eq 3 -and $p[0] -and $p[0] -eq $p[1] -and $p[2] -like '*com.syahmie.stormztv*')
 }
 & $py -I ..\tools\b64push.py $apk /data/local/tmp/tvhome.apk
 if ($LASTEXITCODE -ne 0) { throw 'APK upload failed' }
@@ -103,21 +103,21 @@ Write-Host $out
 if ("$out" -notmatch 'Success') { throw 'pm install failed; the stock launcher was left untouched' }
 try {
     @(
-        'pm grant com.gathin.tvhome android.permission.ACCESS_FINE_LOCATION 2>/dev/null; echo location-granted',
-        'cmd package compile -m speed -f com.gathin.tvhome',
-        "am start -W -n com.gathin.tvhome/.MainActivity | grep -E '^(Status|Error)'"
+        'pm grant com.syahmie.stormztv android.permission.ACCESS_FINE_LOCATION 2>/dev/null; echo location-granted',
+        'cmd package compile -m speed -f com.syahmie.stormztv',
+        "am start -W -n com.syahmie.stormztv/.MainActivity | grep -E '^(Status|Error)'"
     ) | & $py -I ..\tools\tv.py --batch
     # Check it really runs on this TV before the TV's own launcher is touched.
     if (-not (Test-Healthy 'start')) { throw 'Glass TV did not start properly on this TV (it is not in front, or it keeps restarting).' }
     # Android 9 only accepts a component here; Android 10+ also takes a bare package name.
     @(
         $disableStock,
-        'cmd package set-home-activity --user 0 com.gathin.tvhome/.MainActivity'
+        'cmd package set-home-activity --user 0 com.syahmie.stormztv/.MainActivity'
     ) | & $py -I ..\tools\tv.py --batch
     # Order matters, see build-and-install.sh: start the new launcher, disable the stock one, set the
     # preference last, then check where Home ended up.
     $homeNow = (& $py -I ..\tools\tv.py 'cmd package resolve-activity --brief -c android.intent.category.HOME -a android.intent.action.MAIN' | Select-Object -Last 1).Trim()
-    if ($homeNow -notlike 'com.gathin.tvhome/*') {
+    if ($homeNow -notlike 'com.syahmie.stormztv/*') {
         throw "Home resolves to '$homeNow', not to the new launcher. On Google TV this usually means com.google.android.tungsten.setupwraith also claims Home: add it to your debloat list (see README, Troubleshooting), apply it, then run this script again."
     }
     Write-Host "Home now resolves to $homeNow"
@@ -130,7 +130,7 @@ try {
 }
 # Optional accessibility services, appended to enabled_accessibility_services without dropping others.
 function Enable-Service([string]$Name) {
-    $svc = "com.gathin.tvhome/.$Name"
+    $svc = "com.syahmie.stormztv/.$Name"
     # On stdin, like Test-Healthy: the quotes in this command would not survive PowerShell 5.1 as an argument.
     ('s=$(settings get secure enabled_accessibility_services); case "$s" in *' + $Name + '*) ;; null|"") settings put secure enabled_accessibility_services ' + $svc + ' ;; *) settings put secure enabled_accessibility_services "$s:' + $svc + '" ;; esac; settings put secure accessibility_enabled 1; echo ' + $Name + ' enabled') | & $py -I ..\tools\tv.py --batch | Select-Object -Last 1
 }

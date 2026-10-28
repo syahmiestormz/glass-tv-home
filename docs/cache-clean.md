@@ -32,7 +32,7 @@ when debugging is off it does nothing; it tries at most once a day; and after th
 prompts it stops asking.
 
 - Change how often with `"cache_clean_days"` in the theme's `config.json` (1 to 90); `0` turns it off.
-- Clean right now, and show the prompt again: `tools/tv.py 'touch /sdcard/Android/data/com.gathin.tvhome/files/clean-now'`,
+- Clean right now, and show the prompt again: `tools/tv.py 'touch /sdcard/Android/data/com.syahmie.stormztv/files/clean-now'`,
   then press Home and wait 20 seconds.
 - See the prompt again (to test it): also `touch .../files/new-key` before `clean-now`. Glass TV makes a new key,
   which the TV has not allowed yet.

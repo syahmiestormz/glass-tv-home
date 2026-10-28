@@ -19,7 +19,7 @@
             android:id="@+id/dailyDay"
             android:layout_width="42dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/outfit"
+            android:fontFamily="@font/hud"
             android:fontVariationSettings="'wght' 600"
             android:includeFontPadding="false"
             android:singleLine="true"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
-                android:fontFamily="@font/outfit"
+                android:fontFamily="@font/hud"
                 android:fontVariationSettings="'wght' 700"
                 android:includeFontPadding="false"
                 android:singleLine="true"
@@ -58,7 +58,7 @@
             android:id="@+id/dailyMinTemp"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/outfit"
+            android:fontFamily="@font/hud"
             android:fontVariationSettings="'wght' 500"
             android:gravity="end"
             android:includeFontPadding="false"
@@ -67,7 +67,7 @@
             android:textColor="#94A3B8"
             android:textSize="11sp" />
 
-        <com.gathin.tvhome.TempRangeBarView
+        <com.syahmie.stormztv.TempRangeBarView
             android:id="@+id/dailyTempBar"
             android:layout_width="0dp"
             android:layout_height="12dp"
@@ -79,7 +79,7 @@
             android:id="@+id/dailyMaxTemp"
             android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/outfit"
+            android:fontFamily="@font/hud"
             android:fontVariationSettings="'wght' 700"
             android:gravity="start"
             android:includeFontPadding="false"

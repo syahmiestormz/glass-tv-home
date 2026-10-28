@@ -180,7 +180,7 @@ Written so that any model can follow it to the letter:
   troubleshooting guide.
 - After the stock launcher is gone, its recommendation services (`tvrecommendations`, `leanbacklauncher*`)
   can be disabled too.
-- **Check**: the script prints `Home now resolves to com.gathin.tvhome/…` and ends with `Installed. Press Home
+- **Check**: the script prints `Home now resolves to com.syahmie.stormztv/…` and ends with `Installed. Press Home
   on the remote to see it.` A line starting with `ERROR:` means it stopped and already put the stock launcher
   back; the message says what to do next.
 
@@ -208,14 +208,14 @@ A theme is a folder with `config.json` (and optional `wallpaper.jpg` or `wallpap
 - **Android 10 quirk**: the first time the launcher gains the internet permission, sockets fail with `EPERM`
   until the TV restarts. Ask before restarting it.
 - Point the screensaver at the launcher's clock before disabling the stock screensaver:
-  `settings put secure screensaver_components com.gathin.tvhome/.ClockDream`.
+  `settings put secure screensaver_components com.syahmie.stormztv/.ClockDream`.
 - **Location / Jerebu & Waktu Solat**: Ask the person where in Malaysia they are located (e.g. Putrajaya, Cheras, Shah Alam, Melaka, JB, Penang, Kuantan, Kuching, KK). Set it via:
-  `adb shell am broadcast -a com.gathin.tvhome.SET_LOCATION -p com.gathin.tvhome --es query "<LOCATION>"`
+  `adb shell am broadcast -a com.syahmie.stormztv.SET_LOCATION -p com.syahmie.stormztv --es query "<LOCATION>"`
   This automatically calibrates both the official Department of Environment (JAS) APIMS haze / IPU ground station and JAKIM prayer times.
 - **Check**: Home restarts within a few seconds with the new settings.
 - **Cache cleaning**: Glass TV clears the TV's app caches itself every 15 days ([docs/cache-clean.md](docs/cache-clean.md)).
   It needs the TV's permission once. With the person at the TV, run
-  `touch /sdcard/Android/data/com.gathin.tvhome/files/clean-now`, press Home and wait 20 seconds: the TV asks
+  `touch /sdcard/Android/data/com.syahmie.stormztv/files/clean-now`, press Home and wait 20 seconds: the TV asks
   **Allow USB debugging?**; they tick **Always allow** and press OK. **Check**: `logcat -d -s TvHome.Clean`
   shows `cleared cached files`. It needs network debugging left on; if they would rather switch it off,
   cleaning stops, nothing else changes.

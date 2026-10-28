@@ -1,0 +1,49 @@
+# onn. 4K / 4K Plus / 4K Pro Streaming Box with Google TV (Walmart), Google TV 14 (SDK 34)
+# STARTING POINT, NOT YET TESTED ON A REAL ONN BOX. Built from the tested Chromecast with Google TV 4K
+# list (examples/google-chromecast-gtv-4k), which runs the same Google TV 14 software stack.
+#   onn. 4K (2023, 8822K4VTG):  Amlogic S905Y4, 2 GB RAM, 8 GB storage  <- the slowest; this list matters most
+#   onn. 4K Plus (2025, DV6116N): Amlogic S905X5M, 2 GB RAM, 16 GB
+#   onn. 4K Pro (2024, ORPK4VTG): Amlogic S905X4, 3 GB RAM, 32 GB
+#
+# Before applying: back up (AGENTS.md step 2), then run `pm list packages | grep -iE "onn|walmart|sei|askey|amlogic|droidlogic"`
+# and look at what the maker added. Don't disable those by name alone: check `dumpsys package <pkg>`
+# first (AGENTS.md rule 7). droidlogic / amlogic packages often run HDMI-CEC and the remote: keep them.
+#
+# Apply:   TV_HOST=<ip> tools/disable.sh devices/onn-4k-google-tv/debloat.txt
+# Undo:    TV_HOST=<ip> tools/restore.sh devices/onn-4k-google-tv/debloat.txt com.google.android.apps.tv.launcherx
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.apps.tv.launcherx (the Google TV home, with its content rows and ads).
+# launcher/build-and-install.sh disables it only after Stormz TV is installed and verified.
+# No tuner and no HDMI inputs: leave live_tv_package empty in config.xml (already the default).
+#
+# Kept on purpose: Google Assistant (com.google.android.katniss), Chromecast built-in
+# (com.google.android.apps.mediashell), phone remote (com.google.android.tv.remote.service), Play Store and
+# Play Services, Gboard, Bluetooth, remote firmware updates (com.google.android.tv.dfuservice).
+
+# Telemetry, feedback and ads
+com.google.android.feedback
+com.android.tv.feedbackconsent
+com.google.android.tv.remotecontrol.logging     # remote usage logging
+com.google.android.apps.tv.netoscope            # network diagnostics reporting
+# Privacy Sandbox / federated-learning modules: re-enable if Play Store or Assistant misbehave.
+com.google.android.federatedcompute
+com.google.android.ondevicepersonalization.services
+com.google.android.adservices.api               # Privacy Sandbox ad services
+com.google.android.ext.adservices.api
+
+# Preloaded apps (comment out any you use)
+com.google.android.play.games
+com.google.android.videos                       # Google TV / Play Movies
+com.android.printspooler
+com.google.android.marvin.talkback              # re-enable if you need the screen reader
+
+# Google ambient mode screensaver: downloads photos in the background. Stormz TV has its own
+# Nightstand screensaver; point the system at it after disabling these:
+#   settings put secure screensaver_components com.syahmie.stormztv/.ClockDream
+com.google.android.apps.tv.dreamx
+com.google.android.backdrop
+
+# Stock home. Keep commented: build-and-install.sh handles launcherx itself.
+# com.google.android.apps.tv.launcherx
+com.google.android.tungsten.setupwraith  # setup wizard; on Google TV 14 it re-enables launcherx and takes Home
