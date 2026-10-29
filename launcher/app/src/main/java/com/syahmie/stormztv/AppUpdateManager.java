@@ -95,7 +95,7 @@ public final class AppUpdateManager {
         if (activity == null || activity.isFinishing()) return;
 
         if (manualCheck) {
-            Toast.makeText(activity, "🔄 Menyemak kemas kini terkini...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "🔄 Checking for updates...", Toast.LENGTH_SHORT).show();
         }
 
         executor.execute(() -> {
@@ -110,7 +110,7 @@ public final class AppUpdateManager {
                 int responseCode = conn.getResponseCode();
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     if (manualCheck) {
-                        mainHandler.post(() -> Toast.makeText(activity, "❌ Gagal menyemak pelayan kemas kini (HTTP " + responseCode + ")", Toast.LENGTH_SHORT).show());
+                        mainHandler.post(() -> Toast.makeText(activity, "❌ Couldn't reach the update server (HTTP " + responseCode + ")", Toast.LENGTH_SHORT).show());
                     }
                     return;
                 }
@@ -128,7 +128,7 @@ public final class AppUpdateManager {
                 int remoteVersionCode = json.optInt("versionCode", 0);
                 String remoteVersionName = json.optString("versionName", "");
                 String apkUrl = json.optString("apkUrl", "");
-                String changelog = json.optString("changelog", "Penambahbaikan prestasi dan kestabilan.");
+                String changelog = json.optString("changelog", "Performance and stability improvements.");
 
                 PackageManager pm = activity.getPackageManager();
                 PackageInfo pInfo = pm.getPackageInfo(activity.getPackageName(), 0);
@@ -146,7 +146,7 @@ public final class AppUpdateManager {
                         showUpdateDialog(activity, remoteVersionName, currentVersionName, changelog, apkUrl);
                     } else {
                         if (manualCheck) {
-                            Toast.makeText(activity, "✅ Stormz TV sudah di versi terkini (v" + currentVersionName + ")!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(activity, "✅ Stormz TV is up to date (v" + currentVersionName + ")!", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -154,7 +154,7 @@ public final class AppUpdateManager {
             } catch (Exception e) {
                 Log.e(TAG, "Error checking updates: " + e.getMessage());
                 if (manualCheck) {
-                    mainHandler.post(() -> Toast.makeText(activity, "❌ Ralat menyemak kemas kini. Sila pastikan Wi-Fi bersambung.", Toast.LENGTH_SHORT).show());
+                    mainHandler.post(() -> Toast.makeText(activity, "❌ Couldn't check for updates. Make sure Wi-Fi is connected.", Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -162,20 +162,20 @@ public final class AppUpdateManager {
 
     private static void showUpdateDialog(Activity activity, String newVersionName, String currentVersionName, String changelog, String apkUrl) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.Theme_TvHome_GlassDialog);
-        builder.setTitle("🚀 Kemas Kini Baharu Ditemui (v" + newVersionName + ")");
+        builder.setTitle("🚀 Update available (v" + newVersionName + ")");
         
-        String message = "Versi Semasa: v" + currentVersionName + "\n"
-                + "Versi Terkini: v" + newVersionName + "\n\n"
-                + "📋 Nota Pembaharuan:\n" + changelog + "\n\n"
-                + "Adakah anda ingin memuat turun dan memasang sekarang?";
+        String message = "Current version: v" + currentVersionName + "\n"
+                + "Latest version: v" + newVersionName + "\n\n"
+                + "📋 What's new:\n" + changelog + "\n\n"
+                + "Download and install it now?";
         builder.setMessage(message);
 
-        builder.setPositiveButton("Muat Turun & Pasang", (dialog, which) -> {
+        builder.setPositiveButton("Download & install", (dialog, which) -> {
             dialog.dismiss();
             downloadAndInstallApk(activity, apkUrl, newVersionName);
         });
 
-        builder.setNegativeButton("Nanti Sahaja", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Later", (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -186,26 +186,26 @@ public final class AppUpdateManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!activity.getPackageManager().canRequestPackageInstalls()) {
                 AlertDialog.Builder permDialog = new AlertDialog.Builder(activity, R.style.Theme_TvHome_GlassDialog);
-                permDialog.setTitle("⚠️ Kebenaran Pemasangan Diperlukan");
-                permDialog.setMessage("Sila aktifkan 'Allow from this source' untuk membenarkan Stormz TV memasang kemas kini automatik.");
-                permDialog.setPositiveButton("Buka Tetapan", (d, w) -> {
+                permDialog.setTitle("⚠️ Install permission needed");
+                permDialog.setMessage("Turn on 'Allow from this source' so Stormz TV can install updates.");
+                permDialog.setPositiveButton("Open Settings", (d, w) -> {
                     try {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                                 Uri.parse("package:" + activity.getPackageName()));
                         activity.startActivity(intent);
                     } catch (Exception e) {
-                        Toast.makeText(activity, "Buka Tetapan > Keselamatan > Install Unknown Apps", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Open Settings > Security > Install unknown apps", Toast.LENGTH_LONG).show();
                     }
                 });
-                permDialog.setNegativeButton("Batal", (d, w) -> d.dismiss());
+                permDialog.setNegativeButton("Cancel", (d, w) -> d.dismiss());
                 permDialog.show();
                 return;
             }
         }
 
         ProgressDialog progressDialog = new ProgressDialog(activity, R.style.Theme_TvHome_GlassDialog);
-        progressDialog.setTitle("📥 Memuat Turun Kemas Kini (v" + versionName + ")");
-        progressDialog.setMessage("Sedang memuat turun fail pemasangan...");
+        progressDialog.setTitle("📥 Downloading update (v" + versionName + ")");
+        progressDialog.setMessage("Downloading the update...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(100);
@@ -260,7 +260,7 @@ public final class AppUpdateManager {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(activity, "❌ Ralat memuat turun kemas kini: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "❌ Update download failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             } finally {
                 try {
@@ -275,7 +275,7 @@ public final class AppUpdateManager {
 
     private static void installApk(Activity activity, File apkFile) {
         if (!apkFile.exists()) {
-            Toast.makeText(activity, "Fail APK kemas kini tidak dijumpai.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Update APK file not found.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -288,7 +288,7 @@ public final class AppUpdateManager {
             activity.startActivity(intent);
         } catch (Exception e) {
             Log.e(TAG, "Install error: " + e.getMessage());
-            Toast.makeText(activity, "❌ Gagal memulakan pemasangan: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "❌ Couldn't start the install: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

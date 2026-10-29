@@ -105,10 +105,10 @@ final class Glider extends View {
         super(context);
         this.reducedMotion = reducedMotion;
         float density = context.getResources().getDisplayMetrics().density;
-        veil.setColor(0x1400E5FF);
+        veil.setColor(0x14FF3DCB);
         rim = new GlassRim(1.5f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
-        bracket = Hud.stroke(2.5f * density, Hud.CYAN);
-        darkRim = Hud.stroke(1f * density, 0x9900E5FF);
+        bracket = Hud.stroke(2.5f * density, Hud.PINK);
+        darkRim = Hud.stroke(1f * density, 0x99FF3DCB);
         bracketGap = 4f * density;
         bracketLen = 16f * density;
         shadowBlur = 22f * density;

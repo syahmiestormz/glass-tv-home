@@ -51,11 +51,11 @@ final class WeeklyAyah {
     }
 
     /**
-     * The owner's choice of translation, from the Wallpaper menu: Malay unless set to English. Its key is
+     * The owner's choice of translation, from the Wallpaper menu: English unless set to Malay. Its key is
      * not the English text's: one name for both, a boolean and a string, crashed Home on its first start.
      */
     static boolean english(Context ctx) {
-        return prefs(ctx).getBoolean("show_english", false);
+        return prefs(ctx).getBoolean("show_english", true);   // Stormz TV: English by default
     }
 
     static void setEnglish(Context ctx, boolean on) {

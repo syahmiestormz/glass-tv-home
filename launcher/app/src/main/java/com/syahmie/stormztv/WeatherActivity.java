@@ -124,13 +124,13 @@ public class WeatherActivity extends Activity {
     private void showLocationPickerDialog() {
         String activeRegion = AppLocationManager.getActiveRegion(this);
         CharSequence[] topOptions = new CharSequence[]{
-                "📍 Pilih Bandar / Stesen (" + activeRegion + ")",
-                "🌏 Tukar Negara / Region Asia (Default: Malaysia)",
-                "✨ Tetapkan Suasana Latar Cuaca (Cerah, Hujan, Ribut, Malam)"
+                "📍 Choose a town / station (" + activeRegion + ")",
+                "🌏 Change country / region (default: Malaysia)",
+                "✨ Set the weather scene (clear, rain, storm, night)"
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-        builder.setTitle("🌏 Lokasi & Suasana Cuaca");
+        builder.setTitle("🌏 Location & weather scene");
         builder.setItems(topOptions, (dialog, which) -> {
             dialog.dismiss();
             if (which == 0) {
@@ -141,7 +141,7 @@ public class WeatherActivity extends Activity {
                 showWeatherAnimationPicker();
             }
         });
-        builder.setNegativeButton("Tutup / Cancel", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Close / Cancel", (dialog, which) -> dialog.dismiss());
         builder.create().show();
     }
 
@@ -149,41 +149,41 @@ public class WeatherActivity extends Activity {
         SharedPreferences p = getSharedPreferences("app_weather_prefs", MODE_PRIVATE);
 
         CharSequence[] conditions = new CharSequence[]{
-                "☀️ Tetapkan Cerah / Sunny (Pantulan suria, lens flare & cahaya)",
-                "🌧️ Tetapkan Hujan / Rain (Titisan hujan & percikan air)",
-                "⛈️ Tetapkan Ribut Petir / Thunderstorm (Kilat menyambar & hujan)",
-                "⛅ Tetapkan Mendung / Cloudy (Awan berarak di langit)",
-                "🌙 Tetapkan Malam / Night (Bintang berkelip & sinaran bulan)",
-                "🔄 Pulihkan kepada Cuaca Semasa Sebenar (Auto)"
+                "☀️ Sunny (sun glare & light)",
+                "🌧️ Rain (raindrops & splashes)",
+                "⛈️ Thunderstorm (lightning & rain)",
+                "⛅ Cloudy (drifting clouds)",
+                "🌙 Night (stars & moonlight)",
+                "🔄 Back to the live weather (auto)"
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-        builder.setTitle("✨ Pilihan Suasana Latar Belakang");
+        builder.setTitle("✨ Background scene");
         builder.setItems(conditions, (dialog, which) -> {
             dialog.dismiss();
             SharedPreferences.Editor ed = p.edit();
             if (which == 0) {
                 ed.putString("atmosphere_mode", "SUNNY").apply();
-                Toast.makeText(this, "Suasana ditetapkan kepada: Cerah (Sunny)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Scene set to: sunny", Toast.LENGTH_SHORT).show();
             } else if (which == 1) {
                 ed.putString("atmosphere_mode", "RAIN").apply();
-                Toast.makeText(this, "Suasana ditetapkan kepada: Hujan (Rain)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Scene set to: rain", Toast.LENGTH_SHORT).show();
             } else if (which == 2) {
                 ed.putString("atmosphere_mode", "THUNDERSTORM").apply();
-                Toast.makeText(this, "Suasana ditetapkan kepada: Ribut Petir", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Scene set to: thunderstorm", Toast.LENGTH_SHORT).show();
             } else if (which == 3) {
                 ed.putString("atmosphere_mode", "CLOUDY").apply();
-                Toast.makeText(this, "Suasana ditetapkan kepada: Mendung (Cloudy)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Scene set to: cloudy", Toast.LENGTH_SHORT).show();
             } else if (which == 4) {
                 ed.putString("atmosphere_mode", "NIGHT").apply();
-                Toast.makeText(this, "Suasana ditetapkan kepada: Malam (Night)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Scene set to: night", Toast.LENGTH_SHORT).show();
             } else {
                 ed.putString("atmosphere_mode", "AUTO").apply();
-                Toast.makeText(this, "Pulih kepada data cuaca sebenar (Auto)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Back to live weather (auto)", Toast.LENGTH_SHORT).show();
             }
             populateUi();
         });
-        builder.setNegativeButton("Kembali", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Back", (dialog, which) -> dialog.dismiss());
         builder.create().show();
     }
 
@@ -201,22 +201,22 @@ public class WeatherActivity extends Activity {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-        builder.setTitle("🌏 Pilih Negara / Region Asia");
+        builder.setTitle("🌏 Choose a country / region");
         builder.setSingleChoiceItems(items, selectedIndex, (dialog, which) -> {
             dialog.dismiss();
             String chosenRegion = regions.get(which);
             AppLocationManager.setActiveRegion(WeatherActivity.this, chosenRegion);
-            Toast.makeText(WeatherActivity.this, "Region dipilih: " + chosenRegion, Toast.LENGTH_SHORT).show();
+            Toast.makeText(WeatherActivity.this, "Region: " + chosenRegion, Toast.LENGTH_SHORT).show();
             showStationListDialog(chosenRegion);
         });
-        builder.setNegativeButton("Kembali", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Back", (dialog, which) -> dialog.dismiss());
         builder.create().show();
     }
 
     private void showStationListDialog(String region) {
         final List<AppLocationManager.Station> stations = AppLocationManager.getStationsForRegion(region);
         if (stations.isEmpty()) {
-            Toast.makeText(this, "Tiada stesen dijumpai bagi " + region, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No station found for " + region, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -232,15 +232,15 @@ public class WeatherActivity extends Activity {
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert);
-        builder.setTitle("📍 Pilih Bandar / Stesen (" + region + ")");
+        builder.setTitle("📍 Choose a town / station (" + region + ")");
         builder.setSingleChoiceItems(items, selectedIndex, (dialog, which) -> {
             dialog.dismiss();
             AppLocationManager.Station picked = stations.get(which);
             AppLocationManager.setStation(WeatherActivity.this, picked);
-            Toast.makeText(WeatherActivity.this, "Menyelaras cuaca " + picked.name + "...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(WeatherActivity.this, "Updating weather " + picked.name + "...", Toast.LENGTH_SHORT).show();
             WeatherAirQuality.sync(WeatherActivity.this, WeatherActivity.this::populateUi);
         });
-        builder.setNegativeButton("Kembali", (dialog, which) -> dialog.dismiss());
+        builder.setNegativeButton("Back", (dialog, which) -> dialog.dismiss());
         builder.create().show();
     }
 
@@ -264,15 +264,15 @@ public class WeatherActivity extends Activity {
         
         // Display Condition text matching active atmosphere
         if (conditionType == WeatherBackgroundView.ConditionType.SUNNY) {
-            weatherMainCondition.setText("Cerah");
+            weatherMainCondition.setText("Sunny");
         } else if (conditionType == WeatherBackgroundView.ConditionType.NIGHT) {
-            weatherMainCondition.setText("Malam Tenang");
+            weatherMainCondition.setText("Calm night");
         } else if (conditionType == WeatherBackgroundView.ConditionType.THUNDERSTORM) {
-            weatherMainCondition.setText("Ribut Petir");
+            weatherMainCondition.setText("Thunderstorm");
         } else if (conditionType == WeatherBackgroundView.ConditionType.RAIN) {
-            weatherMainCondition.setText("Hujan");
+            weatherMainCondition.setText("Rain");
         } else {
-            weatherMainCondition.setText("Mendung");
+            weatherMainCondition.setText("Cloudy");
         }
 
         weatherMainSub.setText(String.format(Locale.ROOT, "H:%d°  L:%d°", w.highTemp, w.lowTemp));
@@ -346,7 +346,7 @@ public class WeatherActivity extends Activity {
             minTempView.setText(item.minTemp + "°");
             maxTempView.setText(item.maxTemp + "°");
 
-            boolean isToday = (i == 0 || "Today".equalsIgnoreCase(item.day) || "Hari ini".equalsIgnoreCase(item.day));
+            boolean isToday = (i == 0 || "Today".equalsIgnoreCase(item.day) || "Today".equalsIgnoreCase(item.day));
             barView.setRange(weekMin, weekMax, item.minTemp, item.maxTemp, isToday ? w.temp : -999);
 
             if (i == w.daily.size() - 1 && divider != null) {
@@ -411,7 +411,7 @@ public class WeatherActivity extends Activity {
         // 6. Footer
         if (weatherFooter != null) {
             weatherFooter.setText(String.format(Locale.ROOT,
-                    "Updated %s  •  Jabatan Alam Sekitar (APIMS)  •  Open-Meteo Atmospheric Model",
+                    "Updated %s  •  Dept. of Environment (APIMS)  •  Open-Meteo",
                     w.updatedTime));
         }
     }

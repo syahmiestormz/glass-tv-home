@@ -2,19 +2,19 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true">
         <shape android:shape="rectangle">
-            <solid android:color="#4D1E3659" />
+            <solid android:color="#4D301259" />
             <stroke
                 android:width="2dp"
-                android:color="#FF00E5FF" />
+                android:color="#FFFF3DCB" />
             <corners android:radius="6dp" />
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#360A1934" />
+            <solid android:color="#361C0834" />
             <stroke
                 android:width="2dp"
-                android:color="#2400E5FF" />
+                android:color="#24FF3DCB" />
             <corners android:radius="6dp" />
         </shape>
     </item>

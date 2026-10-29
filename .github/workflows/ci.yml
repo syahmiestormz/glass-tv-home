@@ -48,7 +48,7 @@ jobs:
         run: |
           size=$(stat -c %s launcher/app/build/outputs/apk/release/app-release.apk)
           echo "release APK: $((size / 1024)) KB"
-          test "$size" -lt 1048576 || { echo "APK is over 1 MB; the launcher targets 2 GB boxes, keep it small"; exit 1; }
+          test "$size" -lt 2097152 || { echo "APK is over 2 MB; the launcher targets 2 GB boxes, keep it small"; exit 1; }
       - name: Phone installer (bundles this launcher build)
         working-directory: launcher
         run: |

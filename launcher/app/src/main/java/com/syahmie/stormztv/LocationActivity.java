@@ -45,7 +45,7 @@ public class LocationActivity extends Activity {
         page.setPadding(dp(64), dp(40), dp(64), dp(28));
         page.setBackground(new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{0xFF1E2A3A, 0xFF0A0E14}));
         page.addView(text("Location", 34, 0xFFFFFFFF, 500));
-        TextView sub = text("Where is this TV? Waktu Solat follows JAKIM's zone, and the weather follows its main town.",
+        TextView sub = text("Where is this TV? Prayer times follow JAKIM's zone, and the weather follows its main town.",
                 15, 0xA6FFFFFF, 400);
         sub.setPadding(0, dp(4), 0, dp(20));
         page.addView(sub);

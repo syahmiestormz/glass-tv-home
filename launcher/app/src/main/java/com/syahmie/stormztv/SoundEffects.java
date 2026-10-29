@@ -112,7 +112,7 @@ final class SoundEffects {
         if (theme == null) return "PlayStation 5";
         if (THEME_SWITCH.equalsIgnoreCase(theme)) return "Nintendo Switch";
         if (THEME_XBOX.equalsIgnoreCase(theme)) return "Xbox Series X/S";
-        if (THEME_OFF.equalsIgnoreCase(theme)) return "Matikan Bunyi (Off)";
+        if (THEME_OFF.equalsIgnoreCase(theme)) return "Sound off";
         return "PlayStation 5";
     }
 

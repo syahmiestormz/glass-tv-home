@@ -116,7 +116,7 @@
                 android:id="@+id/ayahLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DOA HARIAN  •  AYAT PILIHAN"
+                android:text="DAILY VERSE"
                 android:textColor="#CCFFFFFF"
                 android:textSize="11sp"
                 android:fontFamily="@font/hud"
@@ -206,7 +206,7 @@
                     android:id="@+id/lblSubuh"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Subuh"
+                    android:text="Fajr"
                     android:textColor="#B3FFFFFF"
                     android:textSize="12sp"
                     android:fontFamily="@font/hud"
@@ -239,7 +239,7 @@
                     android:id="@+id/lblSyuruk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Syuruk"
+                    android:text="Sunrise"
                     android:textColor="#B3FFFFFF"
                     android:textSize="12sp"
                     android:fontFamily="@font/hud"
@@ -272,7 +272,7 @@
                     android:id="@+id/lblZohor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Zohor"
+                    android:text="Dhuhr"
                     android:textColor="#B3FFFFFF"
                     android:textSize="12sp"
                     android:fontFamily="@font/hud"
@@ -305,7 +305,7 @@
                     android:id="@+id/lblAsar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Asar"
+                    android:text="Asr"
                     android:textColor="#B3FFFFFF"
                     android:textSize="12sp"
                     android:fontFamily="@font/hud"
@@ -371,7 +371,7 @@
                     android:id="@+id/lblIsyak"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Isyak"
+                    android:text="Isha"
                     android:textColor="#B3FFFFFF"
                     android:textSize="12sp"
                     android:fontFamily="@font/hud"
@@ -429,12 +429,12 @@
                     android:layout_height="wrap_content"
                     android:format12Hour="h:mm"
                     android:format24Hour="HH:mm"
-                    android:textColor="#FFE6FBFF"
+                    android:textColor="#FFFFF0FB"
                     android:textSize="56sp"
                     android:fontFamily="@font/hud"
                     android:textStyle="bold"
                     android:letterSpacing="0.02"
-                    android:shadowColor="#B300E5FF"
+                    android:shadowColor="#CCFF3DCB"
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="14"
@@ -483,6 +483,22 @@
                         android:shadowRadius="3"
                         android:textAllCaps="true" />
 
+                    <!-- Stormz TV tag in katakana: the neon-anime touch. The box's CJK font draws it. -->
+                    <TextView
+                        android:id="@+id/stormzTag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="ストームズ・テレビ  //  STORMZ"
+                        android:textColor="#E6FF3DCB"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.08"
+                        android:shadowColor="#99FF3DCB"
+                        android:shadowDx="0"
+                        android:shadowDy="0"
+                        android:shadowRadius="6" />
+
                     <!-- Shamsi date ("27 Mehr 1405"), shown when shamsi_date is on. -->
                     <TextView
                         android:id="@+id/shamsiDate"
@@ -527,13 +543,34 @@
                 android:shadowRadius="3"
                 android:singleLine="true" />
 
+            <!-- System readout: memory, free storage and Wi-Fi, refreshed with the clock while Home shows. -->
+            <TextView
+                android:id="@+id/sysReadout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/weatherAirQuality"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginStart="2dp"
+                android:focusable="false"
+                android:includeFontPadding="false"
+                android:textColor="#D900E5FF"
+                android:textSize="12sp"
+                android:fontFamily="@font/hud"
+                android:letterSpacing="0.06"
+                android:singleLine="true"
+                android:shadowColor="#9900E5FF"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="5" />
+
             <!-- Now Playing Widget Card: Matching bravia-glass-tv design -->
             <LinearLayout
                 android:id="@+id/nowPlayingCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="64dp"
-                android:layout_below="@id/weatherAirQuality"
+                android:layout_below="@id/sysReadout"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="12dp"
                 android:focusable="false"
@@ -734,7 +771,7 @@
                 android:id="@+id/prayerTimes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/weatherAirQuality"
+                android:layout_below="@id/sysReadout"
                 android:layout_alignParentStart="true"
                 android:visibility="gone" />
         </RelativeLayout>

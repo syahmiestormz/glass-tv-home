@@ -245,7 +245,7 @@ public class HomeKeyService extends AccessibilityService {
 
             if (isWaitingForConfirmDialog) return;
 
-            // Step 2: Check for "Force stop" / "Paksa henti" button
+            // Step 2: Check for "Force stop" / "Force stop" button
             List<AccessibilityNodeInfo> forceStopButtons = root.findAccessibilityNodeInfosByText("Force stop");
             if (forceStopButtons.isEmpty()) {
                 forceStopButtons = root.findAccessibilityNodeInfosByText("Paksa henti");

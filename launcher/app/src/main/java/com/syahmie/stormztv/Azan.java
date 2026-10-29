@@ -72,11 +72,11 @@ final class Azan {
     }
 
     static String soundLabel(String choice) {
-        if (SOUND_MADINAH.equals(choice)) return "🕌 Azan Masjid Nabawi Madinah";
-        if (SOUND_KLCC.equals(choice)) return "🇲🇾 Azan Masjid As-Syakirin KLCC";
-        if (SOUND_CHIME.equals(choice)) return "🔔 Nada Chime Lembut (Ringkas)";
-        if (SOUND_SILENT.equals(choice)) return "🔕 Mod Senyap (Visual Sahaja)";
-        return "🕋 Azan Masjidil Haram Makkah";
+        if (SOUND_MADINAH.equals(choice)) return "🕌 Azan, Masjid an-Nabawi, Madinah";
+        if (SOUND_KLCC.equals(choice)) return "🇲🇾 Azan, Masjid As-Syakirin KLCC";
+        if (SOUND_CHIME.equals(choice)) return "🔔 Soft chime (short)";
+        if (SOUND_SILENT.equals(choice)) return "🔕 Silent (visual only)";
+        return "🕋 Azan, Masjid al-Haram, Makkah";
     }
 
     /** Sets the alarm for the next prayer that is on, today or tomorrow; clears it when none is. */
@@ -223,10 +223,10 @@ final class Azan {
             String channelId = "azan_alarm_channel";
             android.app.NotificationChannel channel = new android.app.NotificationChannel(
                     channelId,
-                    "Waktu Solat & Azan TV",
+                    "Prayer times & azan",
                     android.app.NotificationManager.IMPORTANCE_HIGH
             );
-            channel.setDescription("Notifikasi dan popup waktu solat / azan terapung");
+            channel.setDescription("Prayer time notifications and floating azan card");
             channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_PUBLIC);
             channel.setBypassDnd(true);
             nm.createNotificationChannel(channel);
@@ -237,11 +237,11 @@ final class Azan {
                     azanIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
-            String prayerName = (prayer >= 0 && prayer < PrayerTimes.NAMES.length) ? PrayerTimes.NAMES[prayer] : "Solat";
+            String prayerName = (prayer >= 0 && prayer < PrayerTimes.NAMES.length) ? PrayerTimes.NAMES[prayer] : "Prayer";
             android.app.Notification.Builder builder = new android.app.Notification.Builder(ctx, channelId)
                     .setSmallIcon(R.drawable.ic_azan)
-                    .setContentTitle("🕌 Masuk Waktu " + prayerName)
-                    .setContentText("Peringatan Waktu Solat")
+                    .setContentTitle("🕌 Time for " + prayerName)
+                    .setContentText("Prayer time reminder")
                     .setCategory(android.app.Notification.CATEGORY_ALARM)
                     .setVisibility(android.app.Notification.VISIBILITY_PUBLIC)
                     .setFullScreenIntent(pi, true)

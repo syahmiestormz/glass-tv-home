@@ -121,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
-            android:text="Tekan mana-mana butang untuk kembali"
+            android:text="Press any button to go back"
             android:textColor="#4DFFFFFF"
             android:textSize="12sp"
             android:fontFamily="@font/hud"

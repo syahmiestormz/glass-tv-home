@@ -44,6 +44,8 @@
     <string name="card_state_new_label">New name</string>
     <string name="tile_move">Move</string>
     <string name="tile_app_info">App info</string>
+    <string name="button_service_name">Stormz TV Buttons</string>
+    <string name="button_service_description">Lets the remote\'s YouTube, Netflix, Disney+ and Paramount+ buttons open the apps you choose in Stormz TV. It only listens for those four buttons and reads nothing on screen.</string>
     <string name="dock_add">Add to dock</string>
     <string name="dock_remove">Remove from dock</string>
     <string name="dock_add_slot">Add app</string>

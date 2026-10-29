@@ -166,6 +166,21 @@
             </intent-filter>
         </service>
 
+        <!-- Remote app buttons (YouTube / Netflix / Disney+ / Paramount+) open the owner's chosen apps;
+             see ButtonService and RemoteButtons. The owner turns it on in Settings → Accessibility. -->
+        <service
+            android:name=".ButtonService"
+            android:label="@string/button_service_name"
+            android:exported="true"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/button_service" />
+        </service>
+
         <!-- The remote's Input button (KEYCODE_TV) opens the input switcher; see InputKeyService. -->
         <service
             android:name=".InputKeyService"

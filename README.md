@@ -12,6 +12,16 @@ Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-h
 - **A dock you edit from the remote**: 6 slots. Hold OK on any app → **Add to dock** / **Remove from dock**,
   or press OK on an empty **+** slot to pick an app. Move dock apps along the dock with hold OK → Move.
 - **6 apps per row**, reduced motion on by default.
+- **Neon-anime look (1.1)**: pink-to-cyan neon rims, indigo panels, katakana touches, and four original
+  night scenes drawn by `tools/neon_art.py` (Neon Skyline, Synth Sunset, Sakura Night, Cyber Rain), shipped
+  in the APK so they need no download. The place photos are still under Settings → Wallpaper.
+- **English throughout (1.1)**, including prayer names and the Hijri date.
+- **Remote buttons (1.1)**: choose what the YouTube, Netflix, Disney+ and Paramount+ buttons open
+  (Settings → Remote buttons). Turn on Settings → Accessibility → **Stormz TV Buttons** once so they work
+  inside other apps too.
+- **Auto-close on Home (1.1)**: apps left in the background are closed a few seconds after you come Home;
+  music that is still playing is left alone. On by default, switch it off in Settings.
+- **System readout (1.1)**: memory in use and storage left under the weather.
 - **Your own updates**: the in-app OTA check reads this repository's latest GitHub Release.
 - **Safer phone installer**: every phone makes its own ADB key (the original shipped one shared key).
 - **onn. 4K speed-up guide**: [devices/onn-4k-google-tv](devices/onn-4k-google-tv/README.md).

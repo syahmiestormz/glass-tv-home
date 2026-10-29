@@ -859,7 +859,7 @@
                 android:gravity="center"
                 android:letterSpacing="0.04"
                 android:singleLine="true"
-                android:text="Jabatan Alam Sekitar (APIMS)  •  Open-Meteo Atmospheric Model"
+                android:text="Dept. of Environment (APIMS)  •  Open-Meteo"
                 android:textColor="#40FFFFFF"
                 android:textSize="9sp" />
         </LinearLayout>

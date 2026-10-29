@@ -34,8 +34,8 @@ public class DockDecoration extends RecyclerView.ItemDecoration {
         this.density = density;
         // Same glass as the top-bar pills (GlassDrawable): an even veil and a shining edge.
         band.setColor(Hud.PANEL);
-        accent = Hud.stroke(2f * density, Hud.CYAN);
-        tick = Hud.stroke(1f * density, 0x6600E5FF);
+        accent = Hud.stroke(2f * density, Hud.PINK);
+        tick = Hud.stroke(1f * density, 0x66FF3DCB);
         corner = Hud.stroke(2.5f * density, Hud.CYAN);
         trayShadowPaint.setColor(0x38000000);
         trayShadowPaint.setMaskFilter(new android.graphics.BlurMaskFilter(14f * density, android.graphics.BlurMaskFilter.Blur.NORMAL));

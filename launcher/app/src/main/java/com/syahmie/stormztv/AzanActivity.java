@@ -110,7 +110,7 @@ public class AzanActivity extends Activity {
         time.setPadding(dp(14), 0, 0, dp(3));
         nameRow.addView(time);
         words.addView(nameRow);
-        hint = text("Tekan Back / OK untuk tutup", outfit, 12, 0x99FFFFFF, 400);
+        hint = text("Press Back / OK to close", outfit, 12, 0x99FFFFFF, 400);
         hint.setGravity(Gravity.START);
         words.addView(hint);
         card.addView(words);
@@ -121,15 +121,15 @@ public class AzanActivity extends Activity {
 
         String soundChoice = Azan.getSoundChoice(this);
         if (Azan.SOUND_SILENT.equals(soundChoice)) {
-            hint.setText("Mod Senyap • Tekan Back untuk tutup");
+            hint.setText("Silent • Press Back to close");
             handler.postDelayed(this::finish, 15_000);
         } else if (Azan.SOUND_CHIME.equals(soundChoice)) {
-            hint.setText("Nada Peringatan Ringkas • Tekan Back untuk tutup");
+            hint.setText("Short chime • Press Back to close");
             playChime();
         } else {
             File file = Azan.recording(this, soundChoice);
             if (file == null) {
-                hint.setText("Memuat turun audio " + Azan.soundLabel(soundChoice) + "...");
+                hint.setText("Downloading audio " + Azan.soundLabel(soundChoice) + "...");
                 Azan.fetch(this, soundChoice);
                 playChime();
                 handler.postDelayed(this::finish, 8000);

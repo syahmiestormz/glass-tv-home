@@ -43,7 +43,7 @@ final class PrayerTimes {
     private static final double LONGITUDE = 101.6964;
     private static final double TIMEZONE = 8.0;
 
-    static final String[] NAMES = {"Subuh", "Syuruk", "Zohor", "Asar", "Maghrib", "Isyak"};
+    static final String[] NAMES = {"Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"};
     private static final String[] PRAYER_NAMES = NAMES;
     private static final String[] PRAYER_KEYS = {"fajr", "syuruk", "dhuhr", "asr", "maghrib", "isha"};
 
@@ -420,7 +420,7 @@ final class PrayerTimes {
 
         int l1Start = sb.length();
         String zoneHeader = getShortZoneName(context).toUpperCase(Locale.ROOT);
-        sb.append(zoneHeader).append("  •  SETERUSNYA: ").append(nextName).append(" ").append(nextTime);
+        sb.append(zoneHeader).append("  •  NEXT: ").append(nextName).append(" ").append(nextTime);
         int l1End = sb.length();
         sb.setSpan(new ForegroundColorSpan(0xFFFFFFFF), l1Start, l1End, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.setSpan(new StyleSpan(Typeface.BOLD), l1Start, l1End, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -634,12 +634,12 @@ final class PrayerTimes {
             int month = h.get(java.time.temporal.ChronoField.MONTH_OF_YEAR);
             int year = h.get(java.time.temporal.ChronoField.YEAR);
             String[] months = {
-                "Muharram", "Safar", "Rabiulawal", "Rabiulakhir",
-                "Jamadilawal", "Jamadilakhir", "Rejab", "Syaaban",
-                "Ramadan", "Syawal", "Zulkaedah", "Zulhijjah"
+                "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani",
+                "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Shaban",
+                "Ramadan", "Shawwal", "Dhu al-Qadah", "Dhu al-Hijjah"
             };
             String monthName = (month >= 1 && month <= 12) ? months[month - 1] : "Hijrah";
-            return day + " " + monthName + " " + year + "H";
+            return day + " " + monthName + " " + year + " AH";
         } catch (Exception e) {
             return "";
         }
