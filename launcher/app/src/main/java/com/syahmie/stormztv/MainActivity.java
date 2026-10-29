@@ -1804,11 +1804,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void updateTopFade() {
         if (gridWrap == null) return;
         // Manga Ink: the dock sits right at the top of the grid, so the fade only comes on once a
-        // row has scrolled up past that edge; before, it dimmed the tops of the dock's tiles.
+        // tile itself (8dp inside its row) starts to go past that edge. The dock row rests a few
+        // pixels above it, and counting the row's own top dimmed the dock's tiles.
+        float cardInset = 8 * density;
         boolean inBand = false;
         for (int i = 0; i < grid.getChildCount() && !inBand; i++) {
             View child = grid.getChildAt(i);
-            inBand = grid.getTop() + child.getTop() + child.getTranslationY() < 0;
+            inBand = grid.getTop() + child.getTop() + child.getTranslationY() + cardInset < 0;
         }
         gridWrap.setFadeStrength(inBand ? 1f : 0f);
     }
