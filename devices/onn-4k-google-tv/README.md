@@ -11,9 +11,19 @@ down most, in order:
 3. **Background extras.** Ambient mode, Play Games, telemetry and ad services (see `debloat.txt`).
 4. **Animations.** Halving them makes every menu feel quicker.
 
+## Turn on debugging (onn. 4K Streaming Box, 2023, Google TV)
+
+1. Settings → System → About → scroll to **Android TV OS build** → press OK 7 times, until it says you are
+   a developer (enter your PIN if it asks).
+2. Back to Settings → System → **Developer options** → turn on **USB debugging**.
+3. If there is also **Wireless debugging**, Google TV 14 may want a one-time pairing code instead of port 5555
+   (the Chromecast with Google TV on the same software did): Wireless debugging → Pair device with pairing
+   code, then `adb pair <ip:port> <code>`, `adb connect <ip:port>`, `adb tcpip 5555`.
+4. Note the box's IP address: Settings → Network & Internet → your Wi-Fi network.
+
 ## Steps (from a computer on the same Wi-Fi)
 
-Follow [AGENTS.md](../../AGENTS.md) steps 1–2 first: turn on developer options, connect, back up.
+Follow [AGENTS.md](../../AGENTS.md) steps 1–2 first: connect, back up.
 
 ```sh
 # 3. Debloat (after reading and editing the list)

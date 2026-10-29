@@ -1,7 +1,7 @@
 # onn. 4K / 4K Plus / 4K Pro Streaming Box with Google TV (Walmart), Google TV 14 (SDK 34)
 # STARTING POINT, NOT YET TESTED ON A REAL ONN BOX. Built from the tested Chromecast with Google TV 4K
 # list (examples/google-chromecast-gtv-4k), which runs the same Google TV 14 software stack.
-#   onn. 4K (2023, 8822K4VTG):  Amlogic S905Y4, 2 GB RAM, 8 GB storage  <- the slowest; this list matters most
+#   onn. 4K (2023, 8822K4VTG):  Amlogic S905Y4, 2 GB RAM, 8 GB storage  <- Syahmie's box; this list matters most
 #   onn. 4K Plus (2025, DV6116N): Amlogic S905X5M, 2 GB RAM, 16 GB
 #   onn. 4K Pro (2024, ORPK4VTG): Amlogic S905X4, 3 GB RAM, 32 GB
 #
