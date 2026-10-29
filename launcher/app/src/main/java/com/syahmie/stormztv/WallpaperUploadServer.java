@@ -176,6 +176,8 @@ public class WallpaperUploadServer {
                 handleApiSlideshow(out);
             } else if (requestLine.startsWith("POST /api/clear")) {
                 handleApiClear(out);
+            } else if (requestLine.startsWith("POST /api/link")) {
+                handleApiLink(getQueryParam(requestLine, "url"), out);
             } else if (requestLine.startsWith("GET")) {
                 byte[] pageBytes = getHtmlPage().getBytes("UTF-8");
                 String response = "HTTP/1.1 200 OK\r\n" +
@@ -400,6 +402,25 @@ public class WallpaperUploadServer {
             if (listener != null) listener.onCleared();
             sendSimpleJsonResponse(out, "{\"status\":\"ok\"}");
         } catch (Exception ignored) {}
+    }
+
+    /** "Paste a wallpaper link": the TV downloads the picture (LinkFetcher) and shows it like an upload. */
+    private void handleApiLink(String link, OutputStream out) {
+        try {
+            File customDir = new File(context.getFilesDir(), "custom_wallpapers");
+            File f = LinkFetcher.fetch(link, customDir);
+            sendSimpleJsonResponse(out, "{\"status\":\"ok\",\"file\":\"" + f.getName() + "\"}");
+            if (listener != null) listener.onUploaded(f);
+        } catch (LinkFetcher.LinkException e) {
+            try {
+                sendSimpleJsonResponse(out, "{\"status\":\"error\",\"message\":" + org.json.JSONObject.quote(e.getMessage()) + "}");
+            } catch (Exception ignored) {}
+        } catch (Exception e) {
+            Log.w(TAG, "link failed: " + e);
+            try {
+                sendSimpleJsonResponse(out, "{\"status\":\"error\",\"message\":\"Something went wrong on the TV.\"}");
+            } catch (Exception ignored) {}
+        }
     }
 
     private void sendSimpleJsonResponse(OutputStream out, String json) throws Exception {
@@ -707,6 +728,13 @@ public class WallpaperUploadServer {
                 "      border-color: rgba(248, 113, 113, 0.3);\n" +
                 "      background: rgba(248, 113, 113, 0.1);\n" +
                 "    }\n" +
+                "    .link-box { margin-top: 22px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,0.08); text-align: left; }\n" +
+                "    .link-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }\n" +
+                "    .link-hint { color: #94a3b8; font-size: 12.5px; margin-bottom: 10px; }\n" +
+                "    #link-input { width: 100%; box-sizing: border-box; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,61,203,0.45); background: rgba(14,7,36,0.8); color: #fff; font-size: 14px; }\n" +
+                "    .btn-link { margin-top: 10px; width: 100%; padding: 12px; border: 0; border-radius: 10px; background: #ff3dcb; color: #14051f; font-weight: 800; font-size: 15px; }\n" +
+                "    .btn-link:disabled { opacity: 0.5; }\n" +
+                "    .btn-browse { display: block; margin-top: 10px; text-align: center; padding: 11px; border-radius: 10px; border: 1px solid rgba(0,229,255,0.5); color: #00e5ff; text-decoration: none; font-weight: 700; font-size: 14px; }\n" +
                 "    footer {\n" +
                 "      margin-top: 24px;\n" +
                 "      font-size: 12px;\n" +
@@ -742,6 +770,14 @@ public class WallpaperUploadServer {
                 "    </div>\n" +
                 "\n" +
                 "    <div class=\"status-msg\" id=\"status-msg\"></div>\n" +
+                "\n" +
+                "    <div class=\"link-box\">\n" +
+                "      <div class=\"link-title\">🔗 Or paste a wallpaper link</div>\n" +
+                "      <div class=\"link-hint\">An Alphacoders wallpaper page (wall.alphacoders.com/big.php?i=…) or any direct picture link. The TV downloads it itself.</div>\n" +
+                "      <input id=\"link-input\" type=\"url\" inputmode=\"url\" placeholder=\"https://wall.alphacoders.com/big.php?i=…\">\n" +
+                "      <button class=\"btn-link\" id=\"btn-link\" onclick=\"sendLink()\">Send link to TV</button>\n" +
+                "      <a class=\"btn-browse\" href=\"https://alphacoders.com/resolution/4k-wallpapers\" target=\"_blank\" rel=\"noopener\">🌐 Browse 4K wallpapers on Alphacoders</a>\n" +
+                "    </div>\n" +
                 "    <div class=\"watermark\">✨ Powered by <strong>Syahmie</strong></div>\n" +
                 "  </div>\n" +
                 "\n" +
@@ -830,6 +866,27 @@ public class WallpaperUploadServer {
                 "      xhr.send(selectedFile);\n" +
                 "    }\n" +
                 "\n" +
+                "    function linkMsg(text, ok) {\n" +
+                "      var m = document.getElementById('status-msg');\n" +
+                "      m.className = 'status-msg ' + (ok ? 'success' : 'error');\n" +
+                "      m.innerText = (ok ? '🎉 ' : '❌ ') + text;\n" +
+                "      m.style.display = 'block';\n" +
+                "    }\n" +
+                "    function sendLink() {\n" +
+                "      var input = document.getElementById('link-input');\n" +
+                "      var btn = document.getElementById('btn-link');\n" +
+                "      var url = (input.value || '').trim();\n" +
+                "      if (!url) { linkMsg('Paste a link first.', false); return; }\n" +
+                "      btn.disabled = true; btn.innerText = 'The TV is downloading...';\n" +
+                "      fetch('/api/link?url=' + encodeURIComponent(url), { method: 'POST' })\n" +
+                "        .then(function (r) { return r.json(); })\n" +
+                "        .then(function (j) {\n" +
+                "          btn.disabled = false; btn.innerText = 'Send link to TV';\n" +
+                "          if (j.status === 'ok') { input.value = ''; linkMsg('Done! The picture is on your TV.', true); loadGallery(); }\n" +
+                "          else { linkMsg(j.message || 'That link did not work.', false); }\n" +
+                "        })\n" +
+                "        .catch(function () { btn.disabled = false; btn.innerText = 'Send link to TV'; linkMsg('Connection lost. Make sure your phone and the TV are on the same Wi-Fi.', false); });\n" +
+                "    }\n" +
                 "    function showError(msg) {\n" +
                 "      btnSubmit.disabled = false;\n" +
                 "      btnSubmit.innerText = 'Try again';\n" +

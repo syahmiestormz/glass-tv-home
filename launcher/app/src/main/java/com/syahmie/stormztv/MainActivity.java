@@ -1000,16 +1000,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             wallView.setImageDrawable(t);
             t.startTransition(800);
             // The glass fades to the new picture over the same 800 ms as the wallpaper itself.
-            if (blur != null) Backdrop.present(blur, 800);
-            else blurBackdrop(bmp);
+            // The neon look draws no blurred glass, so no blur is made: saves a bitmap and CPU per picture.
             // Drop the old picture once the fade is done, so only one 1080p bitmap stays in memory.
             handler.postDelayed(() -> {
                 if (wallBitmap == bmp) wallView.setImageBitmap(bmp);
             }, 900);
         } else {
             wallView.setImageBitmap(bmp);
-            if (blur != null) Backdrop.present(blur, 0);
-            else blurBackdrop(bmp);
+            // (no blurred backdrop: see above)
         }
         // An opaque picture covers the whole screen, so the black window and the plain background
         // under it are never seen. Painting them anyway cost two full-screen passes on every frame,
@@ -1080,12 +1078,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // changes with the wallpaper rather than after it. The first picture of a fresh start does
             // not wait for its blur: Home is held for it, and the glass catches up a moment later.
             android.util.DisplayMetrics dm = getResources().getDisplayMetrics();
-            android.graphics.Bitmap blur = firstPicture ? null
-                    : Backdrop.blur(bmp, dm.widthPixels, dm.heightPixels, placesMode ? 0xFF7A7A7A : 0);
+            android.graphics.Bitmap blur = null;   // the neon look draws no blurred glass
             handler.post(() -> {
                 if (isDestroyed()) return;
                 setWallpaper(bmp, fade, blur);
                 setPlace(file);
+                updateHudGrid(file);
             });
         });
     }
@@ -2079,6 +2077,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (playing != null && playing.isPlaying && !playing.packageName.isEmpty()) keep.add(playing.packageName);
         new Thread(() -> AutoClose.run(getApplicationContext(), keep), "auto-close").start();
     };
+
+    /** The neon grid sits over Stormz TV's own scenes; the owner's uploaded pictures are shown clean. */
+    private void updateHudGrid(File picture) {
+        View grid = findViewById(R.id.hudGrid);
+        if (grid == null) return;
+        boolean own = picture != null && picture.getAbsolutePath().contains("custom_wallpapers");
+        boolean on = getResources().getBoolean(R.bool.hud_grid) && !own;
+        grid.setVisibility(on ? View.VISIBLE : View.GONE);
+    }
 
     private void updateSysReadout() {
         TextView v = findViewById(R.id.sysReadout);

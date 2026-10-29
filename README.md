@@ -22,6 +22,10 @@ Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-h
 - **Auto-close on Home (1.1)**: apps left in the background are closed a few seconds after you come Home;
   music that is still playing is left alone. On by default, switch it off in Settings.
 - **System readout (1.1)**: memory in use and storage left under the weather.
+- **Wallpapers from a link (1.2)**: on the phone upload page (Settings → Wallpaper → Manage uploaded
+  pictures → QR code), paste an Alphacoders wallpaper page or any picture link and the TV downloads it
+  itself, scaled to 1080p. A button there opens Alphacoders' 4K collection. Your own pictures are shown
+  without the neon grid over them.
 - **Your own updates**: the in-app OTA check reads this repository's latest GitHub Release.
 - **Safer phone installer**: every phone makes its own ADB key (the original shipped one shared key).
 - **onn. 4K speed-up guide**: [devices/onn-4k-google-tv](devices/onn-4k-google-tv/README.md).
