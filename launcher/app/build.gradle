@@ -10,8 +10,8 @@ android {
         applicationId 'com.syahmie.stormztv'
         minSdk 26
         targetSdk 34
-        versionCode 7
-        versionName '1.4.0'
+        versionCode 8
+        versionName '1.4.1'
     }
 
     // Release signing: CI passes a fixed keystore through environment variables (see .github/workflows),
