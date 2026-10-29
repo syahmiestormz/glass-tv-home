@@ -668,7 +668,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         for (int id : new int[]{R.id.btnInputs, R.id.btnWifi, R.id.btnAssistant, R.id.btnCandyBox, R.id.btnSettings}) {
             View pill = findViewById(id);
             if (pill == null) continue;
-            float radius = 7f * density;   // HUD bezel, not a round pill
+            float radius = 8f * density;   // a soft square, like the tiles
             pill.setBackground(new GlassDrawable(pill, radius, density, glider));
             glider.addCompanion(pill);
             Backdrop.watch(pill);
@@ -1074,6 +1074,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final boolean firstPicture = wallBitmap == null;
         wallDecoder.execute(() -> {
             android.graphics.Bitmap bmp = decodeWallpaper(file);
+            final int accent = Hud.pickAccent(bmp);
             // After the first picture, the blur is made here, before the picture is shown, so the glass
             // changes with the wallpaper rather than after it. The first picture of a fresh start does
             // not wait for its blur: Home is held for it, and the glass catches up a moment later.
@@ -1082,6 +1083,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             handler.post(() -> {
                 if (isDestroyed()) return;
                 setWallpaper(bmp, fade, blur);
+                applyAccent(accent);
                 setPlace(file);
                 updateHudGrid(file);
             });
@@ -1264,6 +1266,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         Azan.fetch(this);
         NowPlayingManager.updateCurrentMedia(this);
         startWallpaperRotation();
+        importWallpapers();
         handler.postDelayed(minuteTick, MINUTE_MS);
         handler.removeCallbacks(nowPlayingPoll);
         handler.postDelayed(nowPlayingPoll, 2000);
@@ -1559,17 +1562,16 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     // ---- top shelf -------------------------------------------------------------------------------
 
+    /** Whether the picture on screen is one of the owner's with no name to show (an upload or a link). */
     private boolean isCustomWallpaper() {
         String activeCat = getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).getString("active_category", NeonWallpapers.CATEGORY);
-        if ("Custom".equalsIgnoreCase(activeCat)) return true;
+        File f = null;
         if (wallpapers != null && !wallpapers.isEmpty()) {
             int idx = getSharedPreferences("wallpaper", MODE_PRIVATE).getInt("index", 0);
-            if (idx >= 0 && idx < wallpapers.size()) {
-                File f = wallpapers.get(idx);
-                if (f != null && f.getAbsolutePath().contains("custom_wallpapers")) return true;
-            }
+            if (idx >= 0 && idx < wallpapers.size()) f = wallpapers.get(idx);
         }
-        return false;
+        if (f != null && f.getAbsolutePath().contains("custom_wallpapers")) return WallpaperImport.title(f) == null;
+        return "Custom".equalsIgnoreCase(activeCat) && f == null;
     }
 
     private void showHero(int position, float dockTopInRoot) {
@@ -1774,7 +1776,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * changes, so the words and the picture never disagree.
      */
     private void setPlace(File picture) {
-        if ((picture != null && picture.getAbsolutePath().contains("custom_wallpapers")) || !isWallpaperDescEnabled()) {
+        boolean own = picture != null && picture.getAbsolutePath().contains("custom_wallpapers");
+        String ownTitle = own ? WallpaperImport.title(picture) : null;
+        if ((own && ownTitle == null) || !isWallpaperDescEnabled()) {
             placeName = null;
             placeText = "";
             placeCountry = "";
@@ -1789,7 +1793,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (heroShelf != null && isWallpaperDescEnabled()) {
             heroShelf.setVisibility(View.VISIBLE);
         }
-        String[] about = placesMode ? PlaceWallpapers.describe(picture) : OnlineWallpapers.describe(picture);
+        String[] about = own ? new String[]{ownTitle, "", "My wallpapers  ·  壁紙"}
+                : placesMode ? PlaceWallpapers.describe(picture) : OnlineWallpapers.describe(picture);
         String title = about != null ? titleCase(about[0]) : null;
         String overview = about != null ? about[1] : "";
         String country = about != null && about.length > 2 ? about[2] : "";
@@ -1998,7 +2003,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void showAmbient(int color) {
         if (!ambientShown) {
             setAmbient(color);
-            ambient.animate().alpha(1f).setDuration(reducedMotion ? 160 : 600)
+            ambient.animate().alpha(AMBIENT_ALPHA).setDuration(reducedMotion ? 160 : 600)
                     .setUpdateListener(a -> syncGlassGlow()).start();
             ambientShown = true;
         } else if (color != ambientColor) {
@@ -2068,6 +2073,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     // ---- system readout, auto-close, remote buttons ----------------------------------------------
 
     private static final long AUTO_CLOSE_DELAY_MS = 4000;
+    /** Wallpaper first: the selected app only lightly tints the room, so the picture keeps its colours. */
+    private static final float AMBIENT_ALPHA = 0.45f;
+
 
     /** Closes apps left in the background, a few seconds after Home is back, off the main thread. */
     private final Runnable autoClose = () -> {
@@ -2078,13 +2086,56 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         new Thread(() -> AutoClose.run(getApplicationContext(), keep), "auto-close").start();
     };
 
-    /** The neon grid sits over Stormz TV's own scenes; the owner's uploaded pictures are shown clean. */
+    /** The black fades behind the clock and the dock (config.xml hud_grid turns them off). */
     private void updateHudGrid(File picture) {
-        View grid = findViewById(R.id.hudGrid);
-        if (grid == null) return;
-        boolean own = picture != null && picture.getAbsolutePath().contains("custom_wallpapers");
-        boolean on = getResources().getBoolean(R.bool.hud_grid) && !own;
-        grid.setVisibility(on ? View.VISIBLE : View.GONE);
+        View scrim = findViewById(R.id.hudGrid);
+        if (scrim == null) return;
+        scrim.setVisibility(getResources().getBoolean(R.bool.hud_grid) ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * The wallpaper's own colour becomes the accent: the selection's edge and glow, the AM/PM and the
+     * label over the wallpaper's name. Only redraws; nothing is laid out again.
+     */
+    private void applyAccent(int color) {
+        if (color == Hud.accent() && accentApplied) return;
+        accentApplied = true;
+        Hud.setAccent(color);
+        TextView ampm = findViewById(R.id.ampm);
+        if (ampm != null) ampm.setTextColor(color);
+        if (heroWhere != null) heroWhere.setTextColor(color);
+        if (glider != null) glider.invalidate();
+        View glass = findViewById(R.id.glass);
+        if (glass != null) glass.invalidate();
+        if (grid != null) grid.invalidate();
+        for (int id : new int[]{R.id.btnInputs, R.id.btnWifi, R.id.btnAssistant, R.id.btnCandyBox, R.id.btnSettings}) {
+            View pill = findViewById(id);
+            if (pill != null) pill.invalidate();
+        }
+    }
+
+    private boolean accentApplied;
+    private boolean importRunning;
+
+    /**
+     * Pictures pushed into the import folder (WallpaperImport) join the owner's wallpapers, and Home
+     * switches to rotating them, a new one every 10 minutes.
+     */
+    private void importWallpapers() {
+        if (importRunning) return;
+        importRunning = true;
+        new Thread(() -> {
+            List<File> added = WallpaperImport.run(getApplicationContext());
+            handler.post(() -> {
+                importRunning = false;
+                if (added.isEmpty() || isDestroyed()) return;
+                getSharedPreferences("wallpaper_prefs", MODE_PRIVATE).edit()
+                        .putInt("wallpaper_interval_minutes", 10)
+                        .putBoolean("shuffle_mode", true)
+                        .apply();
+                onCustomWallpaperSlideshow();
+            });
+        }, "wallpaper-import").start();
     }
 
     private void updateSysReadout() {
@@ -2095,8 +2146,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     /** Whether a voice assistant is installed and switched on (the box's own one may be disabled). */
     private boolean assistantAvailable() {
         try {
-            return getPackageManager().resolveActivity(new Intent(Intent.ACTION_ASSIST), 0) != null
-                    || getPackageManager().resolveActivity(new Intent("android.speech.action.RECOGNIZE_SPEECH"), 0) != null;
+            // Only a real assistant counts: the speech recogniser on its own resolves even with the
+            // Google assistant switched off, and the mic then opened nothing.
+            android.content.pm.ResolveInfo ri = getPackageManager().resolveActivity(
+                    new Intent(Intent.ACTION_ASSIST), PackageManager.MATCH_DEFAULT_ONLY);
+            return ri != null && ri.activityInfo != null && !"android".equals(ri.activityInfo.packageName);
         } catch (Exception e) {
             return true;
         }
@@ -4511,7 +4565,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 titleView.setTypeface(outfit, Typeface.BOLD);
                 titleView.setFontVariationSettings("'wght' 700");
                 titleView.setTextSize(20f);
-                titleView.setTextColor(Hud.PINK);
+                titleView.setTextColor(Hud.accent());
                 titleView.setLetterSpacing(0.06f);
                 titleView.setAllCaps(true);
                 titleView.setShadowLayer(4 * density, 0, 1 * density, 0xDD000000);
@@ -4530,7 +4584,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 btnPos.setTypeface(outfit, Typeface.BOLD);
                 btnPos.setFontVariationSettings("'wght' 700");
                 btnPos.setTextSize(15f);
-                btnPos.setTextColor(Hud.CYAN);
+                btnPos.setTextColor(Hud.accent());
             }
             Button btnNeg = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
             if (btnNeg != null) {

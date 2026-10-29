@@ -1,40 +1,51 @@
 package com.syahmie.stormztv;
 
-import android.graphics.Canvas;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 
 /**
- * The Stormz TV look: a neon-anime heads-up display. Deep indigo panels instead of frosted glass, rims
- * that run from neon pink to cyan, and corner brackets around whatever is selected. Everything here is plain fills and strokes, so
- * it costs the GPU less than the blurred glass it replaces (the Onn and other 2 GB boxes notice).
+ * The Stormz TV look: wallpaper first. The picture fills the screen; everything over it is near-black
+ * and see-through, with thin neutral edges, so the art stays the star. One accent colour, picked from
+ * the wallpaper on screen, marks what is selected and the date. Plain fills and strokes only: cheaper
+ * for the GPU than blurred glass (the Onn and other 2 GB boxes notice).
  */
 final class Hud {
 
     private Hud() {
     }
 
-    /** The main accent: neon pink. */
-    static final int PINK = 0xFFFF3DCB;
-    /** The second accent: electric cyan. */
-    static final int CYAN = 0xFF00E5FF;
-    /** A third, for depth: violet. */
-    static final int VIOLET = 0xFF8B5CFF;
-    /** A warm second accent for warnings and the active prayer, amber. */
+    /** The accent used until a wallpaper has given one: a soft crimson-pink. */
+    static final int DEFAULT_ACCENT = 0xFFFF5A7A;
+    /** A warm second colour for warnings, amber. */
     static final int AMBER = 0xFFFFB020;
-    /** Rim of a panel: neon pink at the top-left and bottom-right, fading to cyan at the other corners (GlassRim). */
-    static final int RIM_SHINE = 0xF0FF3DCB, RIM_FAINT = 0x8000E5FF;
-    /** Panel fill: deep indigo, see-through enough that the wallpaper still reads behind it. */
-    static final int PANEL = 0xC00E0724;
-    /** The top menu's focus fill, a darker indigo. */
-    static final int FOCUS_FILL = 0xE0120A2A;
+    /** Edge of a panel: a faint white, brighter at the top-left and bottom-right (GlassRim). */
+    static final int RIM_SHINE = 0x47FFFFFF, RIM_FAINT = 0x14FFFFFF;
+    /** Panel fill: OLED black, see-through enough that the wallpaper still reads behind it. */
+    static final int PANEL = 0xB0050507;
+    /** The top menu's focus fill, a deeper black. */
+    static final int FOCUS_FILL = 0xE6000000;
 
-    /** A cyan stroke for brackets and accent lines. */
+    private static volatile int accent = DEFAULT_ACCENT;
+
+    /** The accent of the wallpaper on screen. */
+    static int accent() {
+        return accent;
+    }
+
+    /** The accent at {@code alpha} (0 to 255). */
+    static int accent(int alpha) {
+        return (accent & 0x00FFFFFF) | (alpha << 24);
+    }
+
+    static void setAccent(int color) {
+        accent = color | 0xFF000000;
+    }
+
     static Paint stroke(float widthPx, int color) {
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(widthPx);
-        p.setStrokeCap(Paint.Cap.SQUARE);
         p.setColor(color);
         return p;
     }
@@ -46,34 +57,60 @@ final class Hud {
     }
 
     /**
-     * Four corner brackets just outside {@code r}: the targeting frame of the HUD. {@code gap} pushes them
-     * out from the shape, {@code len} is the length of each arm. Allocates nothing.
+     * The wallpaper's accent: the hue that is both most common and most vivid among its bright,
+     * saturated pixels, lifted so it reads on black. Grey pictures give the default. Runs on a
+     * 64-wide copy, off the main thread.
      */
-    static void brackets(Canvas c, RectF r, float gap, float len, Paint p) {
-        float l = r.left - gap, t = r.top - gap, rt = r.right + gap, b = r.bottom + gap;
-        float arm = Math.min(len, Math.min(rt - l, b - t) / 3f);
-        // top-left
-        c.drawLine(l, t, l + arm, t, p);
-        c.drawLine(l, t, l, t + arm, p);
-        // top-right
-        c.drawLine(rt - arm, t, rt, t, p);
-        c.drawLine(rt, t, rt, t + arm, p);
-        // bottom-left
-        c.drawLine(l, b, l + arm, b, p);
-        c.drawLine(l, b - arm, l, b, p);
-        // bottom-right
-        c.drawLine(rt - arm, b, rt, b, p);
-        c.drawLine(rt, b - arm, rt, b, p);
-    }
-
-    /** A short row of tick marks along the top edge of a panel, like an instrument scale. */
-    static void ticks(Canvas c, RectF r, float step, float h, Paint p) {
-        if (step <= 0f) return;
-        float y = r.top;
-        float start = r.left + step * 2f, end = r.right - step * 2f;
-        int n = 0;
-        for (float x = start; x <= end && n < 400; x += step, n++) {
-            c.drawLine(x, y, x, y + (n % 5 == 0 ? h * 1.8f : h), p);
+    static int pickAccent(Bitmap bmp) {
+        if (bmp == null || bmp.getWidth() <= 0 || bmp.getHeight() <= 0) return DEFAULT_ACCENT;
+        int w = 64, h = Math.max(1, Math.round(64f * bmp.getHeight() / bmp.getWidth()));
+        Bitmap small;
+        try {
+            small = Bitmap.createScaledBitmap(bmp, w, h, true);
+        } catch (Throwable t) {
+            return DEFAULT_ACCENT;
         }
+        int[] px = new int[w * h];
+        small.getPixels(px, 0, w, 0, 0, w, h);
+        if (small != bmp) small.recycle();
+        final int bins = 24;
+        float[] score = new float[bins], sumS = new float[bins], sumV = new float[bins];
+        float[] sumX = new float[bins], sumY = new float[bins];
+        float[] hsv = new float[3];
+        for (int c : px) {
+            Color.colorToHSV(c, hsv);
+            float s = hsv[1], v = hsv[2];
+            if (s < 0.35f || v < 0.30f) continue;
+            float weight = s * v * v;
+            int b = Math.min(bins - 1, (int) (hsv[0] / 360f * bins));
+            score[b] += weight;
+            sumS[b] += s * weight;
+            sumV[b] += v * weight;
+            // Average the hue as a vector, so reds either side of 0° do not cancel out.
+            double a = Math.toRadians(hsv[0]);
+            sumX[b] += (float) Math.cos(a) * weight;
+            sumY[b] += (float) Math.sin(a) * weight;
+        }
+        int best = -1;
+        float bestScore = 0f;
+        for (int b = 0; b < bins; b++) {
+            // A bin counts with its neighbours, so one hue split over two bins is not overlooked.
+            float s = score[b] + 0.5f * (score[(b + 1) % bins] + score[(b + bins - 1) % bins]);
+            if (s > bestScore) {
+                bestScore = s;
+                best = b;
+            }
+        }
+        // Too little colour to go on (under about 2% of a picture at full strength): keep the default.
+        if (best < 0 || bestScore < px.length * 0.02f) return DEFAULT_ACCENT;
+        float hue = (float) Math.toDegrees(Math.atan2(sumY[best], sumX[best]));
+        if (hue < 0) hue += 360f;
+        float sat = sumS[best] / score[best];
+        hsv[0] = hue;
+        hsv[1] = Math.max(0.55f, Math.min(0.85f, sat));
+        hsv[2] = 1f;
+        // Deep blues and violets are dark on black at full strength: lighten them.
+        if (hue >= 200f && hue <= 295f) hsv[1] = Math.min(hsv[1], 0.6f);
+        return Color.HSVToColor(hsv);
     }
 }

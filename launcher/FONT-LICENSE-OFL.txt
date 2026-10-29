@@ -1,5 +1,10 @@
+Copyright 2020 The Space Grotesk Project Authors (https://github.com/floriankarsten/space-grotesk)
+(Space Grotesk is Stormz TV's typeface, app/src/main/res/font/hud_*.ttf, a Latin subset converted from @fontsource/space-grotesk.)
+
 Copyright 2018 The Chakra Petch Project Authors (https://github.com/m4rc1e/Chakra-Petch)
-(Chakra Petch is Stormz TV's HUD typeface, res/font/hud_*.ttf, a Latin subset converted from @fontsource/chakra-petch.)
+(Chakra Petch is the installer's typeface, installer/src/main/res/font/hud_*.ttf, a Latin subset converted from @fontsource/chakra-petch.)
+
+Both fonts are used under the same licence:
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

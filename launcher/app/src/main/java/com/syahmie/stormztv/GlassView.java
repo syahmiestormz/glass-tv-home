@@ -23,8 +23,9 @@ public class GlassView extends View {
         super(context, attrs);
         density = getResources().getDisplayMetrics().density;
         radius = 20f * density;
-        // The same shining edge as the top-bar pills (GlassDrawable), at the same width.
-        rim = new GlassRim(1.5f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
+        // The selection's edge, in the wallpaper's accent.
+        rim = new GlassRim(2f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
+        rim.paint.setShader(null);
         // Cache the slab as a texture. The spring only changes translation, so the GPU can
         // move it without replaying clipPath and the glow on every frame. That path is
         // software-rendered on the MT5895 and is what makes the highlight crawl.
@@ -43,7 +44,7 @@ public class GlassView extends View {
         float inset = 6f * density;
         rect.set(inset, inset, getWidth() - inset, getHeight() - inset);
         // A rim only: the slab sits on top of the tile, so any fill would wash the app out.
-        rim.fit(rect);
+        rim.paint.setColor(Hud.accent());
         canvas.drawRoundRect(rect, radius, radius, rim.paint);
     }
 }

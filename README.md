@@ -1,14 +1,19 @@
 # Stormz TV
 
-**A sci-fi HUD home screen for Android TV and Google TV boxes, built for speed on cheap 2 GB boxes like the
+**A wallpaper-first, anime-styled home screen for Android TV and Google TV boxes, built for speed on cheap 2 GB boxes like the
 onn. 4K.** Strip out the bloat and ads, free up memory, and come home to just your apps.
 
 Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-home), itself based on
 [Clean Your TV](https://github.com/Gathin23/cleanyourtv) by Gathin (MIT). What's different here:
 
-- **Sci-fi HUD look** instead of frosted glass: deep navy panels, cyan rims, targeting brackets around the
-  selected app, an instrument-style dock, a faint grid over the wallpaper, and the Chakra Petch typeface.
-  Plain fills and strokes, no live blur, so it is lighter on weak GPUs.
+- **Wallpaper-first look (1.3)**: the picture fills the screen and everything over it is OLED black and
+  see-through: a big thin clock, dark info pills, black fades behind the clock and the dock, and no tray
+  behind the dock. The selected app's edge and glow take their colour from the wallpaper on screen. Space
+  Grotesk typeface. Plain fills and strokes, no live blur, so it is light on weak GPUs.
+- **Your own wallpapers, named (1.3)**: push pictures into
+  `/sdcard/Android/data/com.syahmie.stormztv/files/import/` over ADB and Home takes them in on its next
+  visit, shows each one's name from its file name (`05_violet_flame.jpg` → "Violet Flame") and rotates them
+  every 10 minutes. They stay on the TV: nothing is uploaded.
 - **A dock you edit from the remote**: 6 slots. Hold OK on any app → **Add to dock** / **Remove from dock**,
   or press OK on an empty **+** slot to pick an app. Move dock apps along the dock with hold OK → Move.
 - **6 apps per row**, reduced motion on by default.
@@ -24,8 +29,7 @@ Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-h
 - **System readout (1.1)**: memory in use and storage left under the weather.
 - **Wallpapers from a link (1.2)**: on the phone upload page (Settings → Wallpaper → Manage uploaded
   pictures → QR code), paste an Alphacoders wallpaper page or any picture link and the TV downloads it
-  itself, scaled to 1080p. A button there opens Alphacoders' 4K collection. Your own pictures are shown
-  without the neon grid over them.
+  itself, scaled to 1080p. A button there opens Alphacoders' 4K collection.
 - **Your own updates**: the in-app OTA check reads this repository's latest GitHub Release.
 - **Safer phone installer**: every phone makes its own ADB key (the original shipped one shared key).
 - **onn. 4K speed-up guide**: [devices/onn-4k-google-tv](devices/onn-4k-google-tv/README.md).
@@ -242,7 +246,7 @@ online.
 
 - Built on [CleanYourTV](https://github.com/Gathin23/cleanyourtv) © 2026 Gathin, MIT licence — see
   [LICENSE](LICENSE). Its debloat lists, tools and launcher are the foundation of this project.
-- The Chakra Petch typeface (Stormz TV's HUD font) is under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
+- The Space Grotesk typeface (Stormz TV's font) and Chakra Petch (the phone installer's) are under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
 - The Inputs icon is from Google's Material Icons (Apache 2.0).
 - Pictures of places and their captions are Bing's daily images (Microsoft). The launcher fetches them on your
   own TV; the promo pictures above show three of them.

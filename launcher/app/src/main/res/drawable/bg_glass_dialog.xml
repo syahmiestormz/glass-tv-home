@@ -6,11 +6,11 @@
             <gradient
                 android:type="linear"
                 android:angle="270"
-                android:startColor="#F018072C"
-                android:centerColor="#E61A0831"
-                android:endColor="#E6140526" />
+                android:startColor="#F00C0C10"
+                android:centerColor="#E60C0C10"
+                android:endColor="#E60A0A0D" />
             <corners android:radius="8dp" />
-            <stroke android:width="2dp" android:color="#66FF3DCB" />
+            <stroke android:width="2dp" android:color="#66FFFFFF" />
         </shape>
     </item>
     <!-- Subtle top sheen -->
@@ -19,8 +19,8 @@
             <gradient
                 android:type="linear"
                 android:angle="270"
-                android:startColor="#1FFF3DCB"
-                android:endColor="#0007010E" />
+                android:startColor="#1FFFFFFF"
+                android:endColor="#00050507" />
             <corners android:topLeftRadius="8dp" android:topRightRadius="8dp" />
         </shape>
     </item>

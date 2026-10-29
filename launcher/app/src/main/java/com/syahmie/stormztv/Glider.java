@@ -31,6 +31,8 @@ final class Glider extends View {
 
     /** About 63% black: bright text reads on it, and every place that uses it matches. */
     static final int FOCUS_ALPHA = 0xA0;
+    /** How strong the selected app's glow is: the shadow bitmap, drawn in the accent. */
+    private static final int GLOW_ALPHA = 0x75;
     /** The top menu's look: a dark fill. */
     static final int DARK = 0;
     /** Between apps: a pane of glass, the same as the pills and the tray. */
@@ -65,11 +67,10 @@ final class Glider extends View {
     private final Backdrop.Fill glass = new Backdrop.Fill();
     private final Paint veil = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final GlassRim rim;
-    /** HUD look: a navy fill instead of blurred glass, and cyan corner brackets around the selection. */
+    /** Wallpaper-first look: a black see-through fill instead of blurred glass, edged in the accent. */
     private final Paint panel = Hud.fill(Hud.PANEL);
     private final Paint bracket;
     private final Paint darkRim;
-    private final float bracketGap, bracketLen;
     private final android.graphics.RectF shape = new android.graphics.RectF();
     private int style = DARK;
     private boolean paneHidden;
@@ -105,14 +106,13 @@ final class Glider extends View {
         super(context);
         this.reducedMotion = reducedMotion;
         float density = context.getResources().getDisplayMetrics().density;
-        veil.setColor(0x14FF3DCB);
+        veil.setColor(0x0AFFFFFF);
         rim = new GlassRim(1.5f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
-        bracket = Hud.stroke(2.5f * density, Hud.PINK);
-        darkRim = Hud.stroke(1f * density, 0x99FF3DCB);
-        bracketGap = 4f * density;
-        bracketLen = 16f * density;
+        // The selection: the wallpaper's accent, as a crisp edge and a soft glow under it.
+        bracket = Hud.stroke(2f * density, Hud.DEFAULT_ACCENT);
+        darkRim = Hud.stroke(1f * density, Hud.DEFAULT_ACCENT);
         shadowBlur = 22f * density;
-        shadowDrop = 8f * density;
+        shadowDrop = 2f * density;
         Backdrop.watch(this);
         setFocusable(false);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -293,18 +293,19 @@ final class Glider extends View {
         float r = Math.min(edges[RADIUS], Math.min(b - t, edges[RIGHT] - edges[LEFT]) / 2f);
         shape.set(edges[LEFT] + dx, t + dy, edges[RIGHT] + dx, b + dy);
         if (style == DARK) {
-            // Top menu: a dark navy plate with a thin cyan outline.
+            // Top menu: a black plate with a thin accent outline.
             paint.setColor(Hud.FOCUS_FILL);
             paint.setAlpha(Math.round(Color.alpha(Hud.FOCUS_FILL) * opacity));
             canvas.drawRoundRect(shape, r, r, paint);
-            darkRim.setAlpha(Math.round(0x99 * opacity));
+            darkRim.setColor(Hud.accent());
+            darkRim.setAlpha(Math.round(0xCC * opacity));
             float h = darkRim.getStrokeWidth() / 2f;
             shape.inset(h, h);
             canvas.drawRoundRect(shape, r - h, r - h, darkRim);
             return;
         }
-        // HUD: the selected app's shadow, a navy plate with a cyan rim, and targeting brackets
-        // just outside it. Plain fills and strokes: no blur to sample on a weak GPU.
+        // The selected app's glow in the accent, a black plate and an accent edge. Plain fills and
+        // strokes: no blur to sample on a weak GPU.
         drawShadow(canvas, r);
         if (paneHidden) return;
         panel.setAlpha(Math.round(Color.alpha(Hud.PANEL) * opacity));
@@ -317,8 +318,12 @@ final class Glider extends View {
         rim.paint.setAlpha(Math.round(255 * opacity));
         canvas.drawRoundRect(shape, r - half, r - half, rim.paint);
         shape.inset(-half, -half);
+        float bh = bracket.getStrokeWidth() / 2f;
+        shape.inset(bh, bh);
+        bracket.setColor(Hud.accent());
         bracket.setAlpha(Math.round(255 * opacity));
-        Hud.brackets(canvas, shape, bracketGap, bracketLen, bracket);
+        canvas.drawRoundRect(shape, r - bh, r - bh, bracket);
+        shape.inset(-bh, -bh);
     }
 
     private void drawShadow(Canvas canvas, float radius) {
@@ -329,8 +334,8 @@ final class Glider extends View {
         if (shadow != null && (w != shadowW || h != shadowH) && moving()) {
             // Changing size mid-glide: stretch the shadow it has rather than blur a new one every
             // frame; the right one is made once the shape comes to rest.
-            shadowPaint.setColor(0xFF000000);
-            shadowPaint.setAlpha(Math.round(0x9A * opacity * shadowMix));
+            shadowPaint.setColor(Hud.accent());
+            shadowPaint.setAlpha(Math.round(GLOW_ALPHA * opacity * shadowMix));
             area.set(shape.left - pad, shape.top - pad + shadowDrop, shape.right + pad, shape.bottom + pad + shadowDrop);
             canvas.drawBitmap(shadow, null, area, shadowPaint);
             return;
@@ -344,8 +349,8 @@ final class Glider extends View {
             shadowW = w;
             shadowH = h;
         }
-        shadowPaint.setColor(0xFF000000);
-        shadowPaint.setAlpha(Math.round(0x9A * opacity * shadowMix));
+        shadowPaint.setColor(Hud.accent());
+        shadowPaint.setAlpha(Math.round(GLOW_ALPHA * opacity * shadowMix));
         canvas.drawBitmap(shadow, shape.left - pad, shape.top - pad + shadowDrop, shadowPaint);
     }
 

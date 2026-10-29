@@ -1,6 +1,7 @@
 package com.syahmie.stormztv;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -17,7 +18,7 @@ import androidx.annotation.NonNull;
  */
 final class GlassDrawable extends Drawable {
 
-    private static final int VEIL_ALPHA = 0x14;
+    private static final int VEIL_ALPHA = 0x08;
     private final View owner;
     private final float radius;
     private final Backdrop.Fill fill = new Backdrop.Fill();
@@ -51,7 +52,7 @@ final class GlassDrawable extends Drawable {
         this.owner = owner;
         this.highlight = highlight;
         this.radius = radius;
-        veil.setColor(0xFF3DCB | VEIL_ALPHA << 24);
+        veil.setColor(0xFFFFFF | VEIL_ALPHA << 24);
         rim = new GlassRim(1.5f * density, Hud.RIM_SHINE, Hud.RIM_FAINT, reach);
     }
 
@@ -69,8 +70,8 @@ final class GlassDrawable extends Drawable {
         }
         float glass = (1f - covered) * fade;
         if (glass > 0f) {
-            // HUD: a navy plate rather than the blurred wallpaper.
-            panel.setAlpha(Math.round(0xC0 * glass));
+            // A black see-through plate rather than the blurred wallpaper.
+            panel.setAlpha(Math.round(Color.alpha(Hud.PANEL) * glass));
             canvas.drawRoundRect(rect, radius, radius, panel);
             veil.setAlpha(Math.round(VEIL_ALPHA * glass));
             canvas.drawRoundRect(rect, radius, radius, veil);

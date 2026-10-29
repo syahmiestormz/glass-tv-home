@@ -637,9 +637,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         return Color.HSVToColor(hsv);
     }
 
-    /** Corner radius for a tile of this width: 6dp at the design width (HUD bezels are nearly square), less when smaller. */
+    /** Corner radius for a tile of this width: 10dp at the design width, less when smaller. */
     static float cornerRadius(int tileWidthPx, float density) {
-        return 6f * density * Math.min(1f, tileWidthPx / (DESIGN_W_DP * density));
+        return 10f * density * Math.min(1f, tileWidthPx / (DESIGN_W_DP * density));
     }
 
     static final class Holder extends RecyclerView.ViewHolder {

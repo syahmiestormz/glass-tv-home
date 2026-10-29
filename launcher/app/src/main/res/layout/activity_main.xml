@@ -14,12 +14,12 @@
         android:layout_height="match_parent"
         android:alpha="0" />
 
-    <!-- HUD grid and scanlines over the wallpaper (config.xml hud_grid). -->
+    <!-- Black fades at the top and bottom of the wallpaper, behind the clock and the dock. -->
     <View
         android:id="@+id/hudGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/hud_grid"
+        android:background="@drawable/scrim"
         android:importantForAccessibility="no" />
 
     <!-- Top shelf: the place's name, its country and what it is about, positioned above the dock in code.
@@ -39,8 +39,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FFFFFFFF"
             android:textSize="36sp"
-            android:fontFamily="@font/hud"
-            android:fontVariationSettings="'wght' 600"
+            android:fontFamily="@font/hud_semibold"
             android:letterSpacing="-0.02"
             android:includeFontPadding="false"
             android:lineSpacingMultiplier="0.75"
@@ -429,15 +428,14 @@
                     android:layout_height="wrap_content"
                     android:format12Hour="h:mm"
                     android:format24Hour="HH:mm"
-                    android:textColor="#FFFFF0FB"
-                    android:textSize="56sp"
-                    android:fontFamily="@font/hud"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.02"
-                    android:shadowColor="#CCFF3DCB"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="88sp"
+                    android:fontFamily="@font/hud_light"
+                    android:letterSpacing="-0.04"
+                    android:shadowColor="#66000000"
                     android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="14"
+                    android:shadowDy="2"
+                    android:shadowRadius="12"
                     android:includeFontPadding="false" />
 
                 <!-- 1:2 layout: 1 jam on left, 2 stacked rows on right (atas: am/pm, bawah: tarikh) -->
@@ -445,7 +443,7 @@
                     android:id="@+id/dateBlock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="16dp"
                     android:orientation="vertical">
 
                     <!-- Atas: AM/PM (e.g. PG / PTG / MLM) -->
@@ -454,11 +452,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
-                        android:textColor="#FF00E5FF"
+                        android:textColor="#FFFF5A7A"
                         android:textSize="13sp"
-                        android:fontFamily="@font/hud"
-                        android:fontVariationSettings="'wght' 600"
-                        android:letterSpacing="0.06"
+                        android:fontFamily="@font/hud_semibold"
+                        android:letterSpacing="0.22"
                         android:shadowColor="#80000000"
                         android:shadowDx="0"
                         android:shadowDy="1"
@@ -472,11 +469,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
                         android:includeFontPadding="false"
-                        android:textColor="#E6FFFFFF"
-                        android:textSize="13sp"
-                        android:fontFamily="@font/hud"
-                        android:fontVariationSettings="'wght' 600"
-                        android:letterSpacing="0.06"
+                        android:textColor="#F2FFFFFF"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/hud_medium"
+                        android:letterSpacing="0.16"
                         android:shadowColor="#80000000"
                         android:shadowDx="0"
                         android:shadowDy="1"
@@ -490,14 +486,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:includeFontPadding="false"
-                        android:text="ストームズ・テレビ  //  STORMZ"
-                        android:textColor="#E6FF3DCB"
+                        android:text="ストームズ  ·  STORMZ TV"
+                        android:textColor="#8CFFFFFF"
                         android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:shadowColor="#99FF3DCB"
+                        android:letterSpacing="0.12"
+                        android:shadowColor="#80000000"
                         android:shadowDx="0"
-                        android:shadowDy="0"
-                        android:shadowRadius="6" />
+                        android:shadowDy="1"
+                        android:shadowRadius="3" />
 
                     <!-- Shamsi date ("27 Mehr 1405"), shown when shamsi_date is on. -->
                     <TextView
@@ -524,14 +520,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/leftBlock"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:focusable="true"
                 android:clickable="true"
                 android:background="@drawable/weather_pill_bg"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"
                 android:includeFontPadding="false"
                 android:textColor="#FFFFFFFF"
                 android:textSize="14sp"
@@ -548,21 +544,21 @@
                 android:id="@+id/sysReadout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/weatherAirQuality"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="6dp"
-                android:layout_marginStart="2dp"
+                android:layout_toEndOf="@id/weatherAirQuality"
+                android:layout_alignTop="@id/weatherAirQuality"
+                android:layout_alignBottom="@id/weatherAirQuality"
+                android:layout_marginStart="8dp"
                 android:focusable="false"
+                android:gravity="center_vertical"
+                android:background="@drawable/info_pill_bg"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 android:includeFontPadding="false"
-                android:textColor="#D900E5FF"
-                android:textSize="12sp"
+                android:textColor="#D9FFFFFF"
+                android:textSize="13sp"
                 android:fontFamily="@font/hud"
-                android:letterSpacing="0.06"
-                android:singleLine="true"
-                android:shadowColor="#9900E5FF"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5" />
+                android:letterSpacing="0.04"
+                android:singleLine="true" />
 
             <!-- Now Playing Widget Card: Matching bravia-glass-tv design -->
             <LinearLayout
@@ -570,7 +566,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="64dp"
-                android:layout_below="@id/sysReadout"
+                android:layout_below="@id/weatherAirQuality"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="12dp"
                 android:focusable="false"
@@ -771,7 +767,7 @@
                 android:id="@+id/prayerTimes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sysReadout"
+                android:layout_below="@id/weatherAirQuality"
                 android:layout_alignParentStart="true"
                 android:visibility="gone" />
         </RelativeLayout>
