@@ -2,7 +2,6 @@ package com.syahmie.stormztv;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,8 +17,8 @@ import java.util.List;
 
 /**
  * The focus: one rounded shape that glides from whatever had focus to whatever has it now,
- * changing only its size and corners on the way. Between apps it is a pane of glass; on the top
- * menu, and travelling between the dock and the top menu, it is dark. It switches look at once,
+ * changing only its size and corners on the way. Manga Ink: between apps it is a red block with
+ * a hard red shadow; on the top menu, and travelling between the dock and the top menu, a red fill. It switches look at once,
  * never blending, and the Inputs list has a dark one of its own.
  *
  * <p>It sits behind what it marks, so it never draws over an app, a pill's label or a row's text:
@@ -31,11 +30,9 @@ final class Glider extends View {
 
     /** About 63% black: bright text reads on it, and every place that uses it matches. */
     static final int FOCUS_ALPHA = 0xA0;
-    /** How strong the selected app's glow is: the shadow bitmap, drawn in the accent. */
-    private static final int GLOW_ALPHA = 0x75;
-    /** The top menu's look: a dark fill. */
+    /** The top menu's look: a filled block. */
     static final int DARK = 0;
-    /** Between apps: a pane of glass, the same as the pills and the tray. */
+    /** Between apps: the block behind the tile and its hard shadow. */
     static final int GLASS = 1;
 
     private static final class Edge extends FloatPropertyCompat<Glider> {
@@ -64,25 +61,13 @@ final class Glider extends View {
     private final float[] edges = new float[5];
     private final SpringAnimation[] springs = new SpringAnimation[5];
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final Backdrop.Fill glass = new Backdrop.Fill();
-    private final Paint veil = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final GlassRim rim;
-    /** Wallpaper-first look: a black see-through fill instead of blurred glass, edged in the accent. */
-    private final Paint panel = Hud.fill(Hud.PANEL);
-    private final Paint bracket;
-    private final Paint darkRim;
     private final android.graphics.RectF shape = new android.graphics.RectF();
     private int style = DARK;
     private boolean paneHidden;
-    /**
-     * The selected app's drop shadow, drawn by the glass glider behind it: soft and even all round,
-     * where the system's shadow fell mostly below the tile and was trimmed at its sides. Drawn once
-     * per tile size into a bitmap, since a blur cannot be drawn live on this TV's GPU.
-     */
-    private Bitmap shadow;
-    private int shadowW, shadowH;
-    private final Paint shadowPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+    /** How far around the shape a redraw reaches (the old soft shadow's size, kept as the dirty margin). */
     private final float shadowBlur, shadowDrop;
+    /** How far the hard red shadow of the selected tile sits down and right. */
+    private final float hardShadow;
     /** How far the shadow is shown: it comes in as the glider turns to glass, and goes with the dark. */
     private float shadowMix;
     private ValueAnimator shadowFade;
@@ -106,13 +91,9 @@ final class Glider extends View {
         super(context);
         this.reducedMotion = reducedMotion;
         float density = context.getResources().getDisplayMetrics().density;
-        veil.setColor(0x0AFFFFFF);
-        rim = new GlassRim(1.5f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
-        // The selection: the wallpaper's accent, as a crisp edge and a soft glow under it.
-        bracket = Hud.stroke(2f * density, Hud.DEFAULT_ACCENT);
-        darkRim = Hud.stroke(1f * density, Hud.DEFAULT_ACCENT);
         shadowBlur = 22f * density;
         shadowDrop = 2f * density;
+        hardShadow = 7f * density;
         Backdrop.watch(this);
         setFocusable(false);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
@@ -293,65 +274,22 @@ final class Glider extends View {
         float r = Math.min(edges[RADIUS], Math.min(b - t, edges[RIGHT] - edges[LEFT]) / 2f);
         shape.set(edges[LEFT] + dx, t + dy, edges[RIGHT] + dx, b + dy);
         if (style == DARK) {
-            // Top menu: a black plate with a thin accent outline.
+            // Top menu: a solid red block behind the button (Manga Ink).
             paint.setColor(Hud.FOCUS_FILL);
             paint.setAlpha(Math.round(Color.alpha(Hud.FOCUS_FILL) * opacity));
-            canvas.drawRoundRect(shape, r, r, paint);
-            darkRim.setColor(Hud.accent());
-            darkRim.setAlpha(Math.round(0xCC * opacity));
-            float h = darkRim.getStrokeWidth() / 2f;
-            shape.inset(h, h);
-            canvas.drawRoundRect(shape, r - h, r - h, darkRim);
+            canvas.drawRect(shape, paint);
             return;
         }
-        // The selected app's glow in the accent, a black plate and an accent edge. Plain fills and
-        // strokes: no blur to sample on a weak GPU.
-        drawShadow(canvas, r);
+        // Between apps, Manga Ink: a red block behind the tile and its hard shadow, 7dp down and
+        // right. At rest the tile hides the block and only the shadow shows; on the move the red
+        // slides behind the tiles. Two plain rects: nothing to blur on a weak GPU.
         if (paneHidden) return;
-        panel.setAlpha(Math.round(Color.alpha(Hud.PANEL) * opacity));
-        canvas.drawRoundRect(shape, r, r, panel);
-        veil.setAlpha(Math.round(0x14 * opacity));
-        canvas.drawRoundRect(shape, r, r, veil);
-        float half = rim.paint.getStrokeWidth() / 2f;
-        shape.inset(half, half);
-        rim.fit(shape);
-        rim.paint.setAlpha(Math.round(255 * opacity));
-        canvas.drawRoundRect(shape, r - half, r - half, rim.paint);
-        shape.inset(-half, -half);
-        float bh = bracket.getStrokeWidth() / 2f;
-        shape.inset(bh, bh);
-        bracket.setColor(Hud.accent());
-        bracket.setAlpha(Math.round(255 * opacity));
-        canvas.drawRoundRect(shape, r - bh, r - bh, bracket);
-        shape.inset(-bh, -bh);
-    }
-
-    private void drawShadow(Canvas canvas, float radius) {
-        if (shadowMix <= 0f) return;
-        int w = Math.round(shape.width()), h = Math.round(shape.height());
-        if (w <= 0 || h <= 0) return;
-        int pad = (int) Math.ceil(shadowBlur * 2);
-        if (shadow != null && (w != shadowW || h != shadowH) && moving()) {
-            // Changing size mid-glide: stretch the shadow it has rather than blur a new one every
-            // frame; the right one is made once the shape comes to rest.
-            shadowPaint.setColor(Hud.accent());
-            shadowPaint.setAlpha(Math.round(GLOW_ALPHA * opacity * shadowMix));
-            area.set(shape.left - pad, shape.top - pad + shadowDrop, shape.right + pad, shape.bottom + pad + shadowDrop);
-            canvas.drawBitmap(shadow, null, area, shadowPaint);
-            return;
-        }
-        if (shadow == null || w != shadowW || h != shadowH) {
-            shadow = Bitmap.createBitmap(w + 2 * pad, h + 2 * pad, Bitmap.Config.ALPHA_8);
-            Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-            p.setColor(0xFF000000);
-            p.setMaskFilter(new android.graphics.BlurMaskFilter(shadowBlur, android.graphics.BlurMaskFilter.Blur.NORMAL));
-            new Canvas(shadow).drawRoundRect(pad, pad, pad + w, pad + h, radius, radius, p);
-            shadowW = w;
-            shadowH = h;
-        }
-        shadowPaint.setColor(Hud.accent());
-        shadowPaint.setAlpha(Math.round(GLOW_ALPHA * opacity * shadowMix));
-        canvas.drawBitmap(shadow, shape.left - pad, shape.top - pad + shadowDrop, shadowPaint);
+        paint.setColor(Hud.RED);
+        paint.setAlpha(Math.round(255 * opacity));
+        canvas.drawRect(shape, paint);
+        shape.offset(hardShadow, hardShadow);
+        canvas.drawRect(shape, paint);
+        shape.offset(-hardShadow, -hardShadow);
     }
 
     private void fadeTo(float to, long ms) {

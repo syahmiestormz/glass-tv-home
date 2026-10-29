@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- An empty dock slot: a dark bay with a dashed cyan outline. -->
+<!-- An empty dock slot: dark paper with a dashed cream ink line. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#99140A2C" />
+    <solid android:color="#660C0C0E" />
     <stroke
-        android:width="1.5dp"
-        android:color="#99FFFFFF"
-        android:dashWidth="8dp"
-        android:dashGap="5dp" />
-    <corners android:radius="6dp" />
+        android:width="3dp"
+        android:color="#FFF3EFE6"
+        android:dashWidth="10dp"
+        android:dashGap="6dp" />
 </shape>

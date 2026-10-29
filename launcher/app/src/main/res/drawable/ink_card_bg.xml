@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The weather and prayer cards: a dark panel with a cream ink line. Selected, the line turns red and
+     a hard red shadow appears; the face keeps its place in both states, 6dp in from the right and bottom. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <layer-list>
+            <item android:left="6dp" android:top="6dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#FFD62839" />
+                </shape>
+            </item>
+            <item android:right="6dp" android:bottom="6dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#FF18181C" />
+                    <stroke android:width="4dp" android:color="#FFFF4B5C" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:right="6dp" android:bottom="6dp">
+                <shape android:shape="rectangle">
+                    <solid android:color="#FF18181C" />
+                    <stroke android:width="4dp" android:color="#FFF3EFE6" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

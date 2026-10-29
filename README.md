@@ -1,19 +1,20 @@
 # Stormz TV
 
-**A wallpaper-first, anime-styled home screen for Android TV and Google TV boxes, built for speed on cheap 2 GB boxes like the
+**A manga-styled home screen for Android TV and Google TV boxes, built for speed on cheap 2 GB boxes like the
 onn. 4K.** Strip out the bloat and ads, free up memory, and come home to just your apps.
 
 Stormz TV is Syahmie's fork of [Glass TV](https://github.com/aqmangge/glass-tv-home), itself based on
 [Clean Your TV](https://github.com/Gathin23/cleanyourtv) by Gathin (MIT). What's different here:
 
-- **Wallpaper-first look (1.3)**: the picture fills the screen and everything over it is OLED black and
-  see-through: a big thin clock, dark info pills, black fades behind the clock and the dock, and no tray
-  behind the dock. The selected app's edge and glow take their colour from the wallpaper on screen. Space
-  Grotesk typeface. Plain fills and strokes, no live blur, so it is light on weak GPUs.
+- **Manga Ink look (1.4)**: dark screentone paper with ink-lined panels. Your wallpaper sits in the big
+  panel with its name in Anton; beside it a cream clock card with a hard red shadow and the weekday in
+  kanji, a weather card and a next-prayer card (OK on it shows today's times and the daily verse, also in
+  Settings → Daily verse & prayer times). The selected app gets a red ink line and a hard red shadow.
+  Inter and Anton typefaces. Plain fills and strokes, no live blur, so it is light on weak GPUs.
 - **Your own wallpapers, named (1.3)**: push pictures into
   `/sdcard/Android/data/com.syahmie.stormztv/files/import/` over ADB and Home takes them in on its next
-  visit, shows each one's name from its file name (`05_violet_flame.jpg` → "Violet Flame") and rotates them
-  every 10 minutes. They stay on the TV: nothing is uploaded.
+  visit, shows each one's name from its file name (`05_violet_flame.jpg` → "Violet Flame", as
+  "第五話 · EPISODE 05") and rotates them every 10 minutes. They stay on the TV: nothing is uploaded.
 - **A dock you edit from the remote**: 6 slots. Hold OK on any app → **Add to dock** / **Remove from dock**,
   or press OK on an empty **+** slot to pick an app. Move dock apps along the dock with hold OK → Move.
 - **6 apps per row**, reduced motion on by default.
@@ -246,7 +247,7 @@ online.
 
 - Built on [CleanYourTV](https://github.com/Gathin23/cleanyourtv) © 2026 Gathin, MIT licence — see
   [LICENSE](LICENSE). Its debloat lists, tools and launcher are the foundation of this project.
-- The Space Grotesk typeface (Stormz TV's font) and Chakra Petch (the phone installer's) are under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
+- The Inter and Anton typefaces (Stormz TV's) and Chakra Petch (the phone installer's) are under the SIL Open Font License (`launcher/FONT-LICENSE-OFL.txt`).
 - The Inputs icon is from Google's Material Icons (Apache 2.0).
 - Pictures of places and their captions are Bing's daily images (Microsoft). The launcher fetches them on your
   own TV; the promo pictures above show three of them.

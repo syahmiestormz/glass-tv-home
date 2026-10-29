@@ -145,16 +145,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean gliderOnPill;
     private final int[] pillAt = new int[2], rootAt = new int[2];
     /** The top-right buttons and the two rectangles used to line them up with the dock. */
-    private View topRow, topSettings;
-    private final Rect alignCard = new Rect(), alignButton = new Rect();
     /** How much of the space between the side paddings the top shelf may use. */
     private static final float HERO_WIDTH_SHARE = 0.40f;
     /** The name is one line, and may run wider than the description, up to this share. */
     private static final float HERO_NAME_WIDTH_SHARE = 0.60f;
-    private static final float HERO_TITLE_MAX_SP = 40f;
+    private static final float HERO_TITLE_MAX_SP = 46f;
     /** The breathing room between the shelf's last line and the top of the app container. */
     private static final float HERO_GAP_DP = 70f;
-    private static final float HERO_TITLE_MIN_SP = 26f;
+    private static final float HERO_TITLE_MIN_SP = 28f;
     /** The shelf's width in pixels, worked out once from the screen. */
     private int heroMaxWidth, heroNameMaxWidth;
     private View heroShelf;
@@ -184,6 +182,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView shamsiDate;
     private TextView prayerTimesView;
     private TextView weatherAirQualityView;
+    /** Manga Ink: the next prayer, beside the weather. */
+    private TextView prayerCardView;
     private View nowPlayingCard;
     private ImageView cardAlbumArt;
     private View cardTrackInfo;
@@ -384,8 +384,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         heroDesc = findViewById(R.id.heroDesc);
         heroWhere = findViewById(R.id.heroWhere);
         int usable = getResources().getDisplayMetrics().widthPixels - (int) ((55 + 56) * density);
-        heroMaxWidth = Math.round(usable * HERO_WIDTH_SHARE);
-        heroNameMaxWidth = Math.round(usable * HERO_NAME_WIDTH_SHARE);
+        // The title lives in the wallpaper panel: 700 of the 1176 parts left beside the 24dp gap,
+        // less its own 28dp margins.
+        int panelW = Math.round((getResources().getDisplayMetrics().widthPixels - 104 * density) * 700f / 1176f);
+        heroMaxWidth = Math.round(panelW - 56 * density);
+        heroNameMaxWidth = heroMaxWidth;
         if (heroName != null) heroName.setMaxWidth(heroNameMaxWidth);
         if (heroDesc != null) heroDesc.setMaxWidth(heroMaxWidth);
 
@@ -440,12 +443,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             heroShelf.setVisibility(View.GONE);
             heroShelf.setAlpha(0f);
         }
-        // The shelf grows and shrinks with the name and the description, so it hangs from its
-        // bottom edge: every time it is measured, its top is worked out again. Positioning it by
-        // the height it happened to have beforehand is what let a tall block run into the dock.
-        heroShelf.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, orr, ob) -> {
-            if (heroBottom > 0) v.setY(heroBottom - v.getHeight());
-        });
+        // The shelf sits at the foot of the wallpaper panel by its layout gravity, so it is never moved in code.
         ampmView = findViewById(R.id.ampm);
         dateView = findViewById(R.id.date);
         updateDateAndPeriod();
@@ -462,25 +460,29 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                         else nowPlayingCard.requestFocus();
                         return true;
                     }
-                    focusTile(0);
+                    focusTile(COLUMNS - 2);
                     return true;
                 }
                 if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    View target = (btnInputs != null && btnInputs.getVisibility() == View.VISIBLE) ? btnInputs
-                            : (btnWifi != null && btnWifi.getVisibility() == View.VISIBLE) ? btnWifi
-                            : findViewById(R.id.btnSettings);
-                    if (target != null) {
-                        target.requestFocus();
-                        return true;
-                    }
+                    if (prayerCardView != null && prayerCardView.getVisibility() == View.VISIBLE) prayerCardView.requestFocus();
+                    return true;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return true;
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    View settings = findViewById(R.id.btnSettings);
+                    if (settings != null) settings.requestFocus();
+                    return true;
                 }
                 return false;
             });
             weatherAirQualityView.setOnFocusChangeListener((v, hasFocus) -> {
-                float scale = hasFocus ? 1.05f : 1.0f;
-                v.animate().scaleX(scale).scaleY(scale).setDuration(150).start();
+                if (hasFocus) {
+                    SoundEffects.playNav();
+                    glider.hide();
+                }
             });
         }
+        setUpPrayerCard();
         updateWeatherAqi();
         WeatherAirQuality.syncIfDue(this, this::updateWeatherAqi);
 
@@ -588,9 +590,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             timeMaghrib = findViewById(R.id.timeMaghrib);
             timeIsyak = findViewById(R.id.timeIsyak);
 
-            islamicShelf.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, orr, ob) -> {
-                if (heroBottom > 0) v.setY(heroBottom - v.getHeight());
-            });
             updateIslamicShelf();
         }
 
@@ -651,8 +650,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         grid.setItemAnimator(null);
         tray = new DockDecoration(COLUMNS, density);
         grid.addItemDecoration(tray);
-        // The top-right buttons line up with the dock, which is only known once the tiles are laid out.
-        grid.getViewTreeObserver().addOnGlobalLayoutListener(this::alignTopButtons);
         // Glass shows the blurred wallpaper behind it: the dock tray (drawn by the grid) and the
         // top-bar pills redraw when a new blurred copy is ready.
         Backdrop.watch(grid);
@@ -668,7 +665,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         for (int id : new int[]{R.id.btnInputs, R.id.btnWifi, R.id.btnAssistant, R.id.btnCandyBox, R.id.btnSettings}) {
             View pill = findViewById(id);
             if (pill == null) continue;
-            float radius = 8f * density;   // a soft square, like the tiles
+            float radius = 0f;   // Manga Ink: square, ink-lined
             pill.setBackground(new GlassDrawable(pill, radius, density, glider));
             glider.addCompanion(pill);
             Backdrop.watch(pill);
@@ -835,10 +832,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     }
                 }
                 if (v.getId() == R.id.btnInputs || (v.getId() == R.id.btnWifi && (btnInputs == null || btnInputs.getVisibility() != View.VISIBLE))) {
-                    if (weatherAirQualityView != null && weatherAirQualityView.getVisibility() == View.VISIBLE) {
-                        weatherAirQualityView.requestFocus();
-                        return true;
-                    }
+                    return true;   // the first button: nothing further left
                 }
                 if (v.getId() == R.id.btnInputs && prayerTimesView != null && prayerTimesView.getVisibility() == View.VISIBLE) {
                     prayerTimesView.requestFocus();
@@ -987,7 +981,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             wallView.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
             // Photos are bright: dim them so the clock, names and tiles stay readable.
             if (placesMode) wallView.setColorFilter(0xFF7A7A7A, android.graphics.PorterDuff.Mode.MULTIPLY);
-            root.addView(wallView, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            // Manga Ink: the picture lives in the big panel, under its fade, title and ink line.
+            wallPanel().addView(wallView, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             ensureWeatherOverlayView();
         }
         android.graphics.Bitmap old = wallBitmap;
@@ -1009,13 +1004,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             wallView.setImageBitmap(bmp);
             // (no blurred backdrop: see above)
         }
-        // An opaque picture covers the whole screen, so the black window and the plain background
-        // under it are never seen. Painting them anyway cost two full-screen passes on every frame,
-        // and this TV's graphics chip, not the app, is what holds each frame back.
-        if (!bmp.hasAlpha()) {
-            root.setBackground(null);
-            getWindow().setBackgroundDrawable(null);
-        }
+        // The paper behind the panels is the background now, so it stays; only the window's own
+        // plain fill, which the paper covers completely, is dropped.
+        getWindow().setBackgroundDrawable(null);
+    }
+
+    private FrameLayout wallPanelView;
+
+    /** The big panel the wallpaper sits in. */
+    private FrameLayout wallPanel() {
+        if (wallPanelView == null) wallPanelView = findViewById(R.id.wallPanel);
+        return wallPanelView;
     }
 
     /** Hands the picture now on screen to the glass, which blurs it once, off the main thread. */
@@ -1074,7 +1073,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final boolean firstPicture = wallBitmap == null;
         wallDecoder.execute(() -> {
             android.graphics.Bitmap bmp = decodeWallpaper(file);
-            final int accent = Hud.pickAccent(bmp);
             // After the first picture, the blur is made here, before the picture is shown, so the glass
             // changes with the wallpaper rather than after it. The first picture of a fresh start does
             // not wait for its blur: Home is held for it, and the glass catches up a moment later.
@@ -1083,7 +1081,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             handler.post(() -> {
                 if (isDestroyed()) return;
                 setWallpaper(bmp, fade, blur);
-                applyAccent(accent);
                 setPlace(file);
                 updateHudGrid(file);
             });
@@ -1578,17 +1575,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         int color = adapter.ambientColorAt(position);
         heroBottom = dockTopInRoot - HERO_GAP_DP * density;
 
-        if (islamicShelf != null) {
-            float iy = heroBottom - islamicShelf.getHeight();
-            islamicShelf.setY(iy);
-            islamicShelf.animate().cancel();
-            if (!heroShown) {
-                if (firstFrameHeld || resuming) islamicShelf.setAlpha(1f);
-                else islamicShelf.animate().alpha(1f).setDuration(260).start();
-            } else {
-                islamicShelf.setAlpha(1f);
-            }
-        }
+        // Manga Ink: the title stays put at the foot of the wallpaper panel, and the verse shelf is
+        // not shown (the prayer card and Settings → Daily verse have it).
 
         // When using custom wallpaper or when description is turned off, disable the description part
         if (isCustomWallpaper() || !isWallpaperDescEnabled()) {
@@ -1611,7 +1599,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         final String label = placeName != null ? placeName : adapter.labelAt(position);
         final String desc = placeName != null ? placeText : "";
         final String where = placeName != null ? placeCountry : "";
-        float y = heroBottom - heroShelf.getHeight();
         boolean changed = !label.contentEquals(heroName.getText());
 
         if (reducedMotion) {
@@ -1619,7 +1606,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // full-screen panel, and this switch exists for the GPUs that cannot afford it.
             heroShelf.animate().cancel();
             setHeroText(label, where, desc);
-            heroShelf.setY(y);
             heroShelf.setTranslationX(0f);
             heroShelf.setAlpha(1f);
             showAmbient(color);
@@ -1629,7 +1615,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         if (!heroShown) {
             setHeroText(label, where, desc);
-            heroShelf.setY(y);
             heroShelf.setTranslationX(0f);
             // Coming back to Home, the words are simply there with the picture: faded in after the
             // first frame, they arrived a beat behind everything else.
@@ -1641,7 +1626,6 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } else if (changed) {
             heroShelf.animate().alpha(0f).translationX(-12 * density).setDuration(120).withEndAction(() -> {
                 setHeroText(label, where, desc);
-                heroShelf.setY(y);
                 heroShelf.setTranslationX(12 * density);
                 heroShelf.animate().alpha(1f).translationX(0f).setDuration(200).start();
             }).start();
@@ -1649,36 +1633,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         } else {
             // Same words, different app: every dock app shares the place's name, so the colour has
             // to follow focus on its own rather than ride along with a change of text.
-            heroShelf.setY(y);
             showAmbient(color);
         }
-    }
-
-    /**
-     * Lines the top-right buttons up with the dock: the Settings circle's right edge sits on the
-     * right edge of the last dock card, and Inputs follows on its left. Card width follows the
-     * column count and the screen, so the edge is measured rather than written down.
-     */
-    private void alignTopButtons() {
-        // This runs on every layout pass, which during a grid scroll is every frame, so it keeps
-        // its views and rectangles rather than looking them up or allocating each time.
-        if (topRow == null) {
-            topRow = findViewById(R.id.topButtons);
-            topSettings = findViewById(R.id.btnSettings);
-        }
-        if (topRow == null || topSettings.getWidth() == 0) return;
-        RecyclerView.ViewHolder last = grid.findViewHolderForAdapterPosition(COLUMNS - 1);
-        if (last == null) return;
-        View card = last.itemView.findViewById(R.id.card);
-        if (card == null || card.getWidth() == 0) return;
-        // Layout positions, not drawn ones: a focused card is scaled up, and the row's own shift
-        // must not be counted twice.
-        alignCard.set(0, 0, card.getWidth(), card.getHeight());
-        root.offsetDescendantRectToMyCoords(card, alignCard);
-        alignButton.set(0, 0, topSettings.getWidth(), topSettings.getHeight());
-        root.offsetDescendantRectToMyCoords(topSettings, alignButton);
-        float shift = alignCard.right - alignButton.right;
-        if (Math.abs(topRow.getTranslationX() - shift) >= 1f) topRow.setTranslationX(shift);
     }
 
     /**
@@ -1688,7 +1644,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void setUpGlider() {
         glider = new Glider(this, reducedMotion);
         // Behind the shelf's text, the pills and the tiles, so it never draws over any of them.
-        root.addView(glider, root.indexOfChild(heroShelf), new FrameLayout.LayoutParams(
+        root.addView(glider, root.indexOfChild(findViewById(R.id.mainContent)), new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         // The glider replaces the glass selection outright.
         glass.setVisibility(View.GONE);
@@ -1766,7 +1722,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         float scaled = getResources().getDisplayMetrics().scaledDensity;
         for (float sp = HERO_TITLE_MAX_SP; sp > HERO_TITLE_MIN_SP; sp -= 2f) {
             paint.setTextSize(sp * scaled);
-            if (paint.measureText(title) <= heroNameMaxWidth) return sp;
+            // The title is shown in capitals (Anton, textAllCaps), so it is measured that way.
+            if (paint.measureText(title.toUpperCase(Locale.ROOT)) <= heroNameMaxWidth) return sp;
         }
         return HERO_TITLE_MIN_SP;
     }
@@ -1793,7 +1750,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (heroShelf != null && isWallpaperDescEnabled()) {
             heroShelf.setVisibility(View.VISIBLE);
         }
-        String[] about = own ? new String[]{ownTitle, "", "My wallpapers  ·  壁紙"}
+        String[] about = own ? new String[]{ownTitle, "My wallpapers  ·  壁紙", MangaCards.episode(picture)}
                 : placesMode ? PlaceWallpapers.describe(picture) : OnlineWallpapers.describe(picture);
         String title = about != null ? titleCase(about[0]) : null;
         String overview = about != null ? about[1] : "";
@@ -1866,8 +1823,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Item height follows the tile size, which follows the column count (AppAdapter.tileWidthPx).
         int inner = grid.getWidth() - grid.getPaddingLeft() - grid.getPaddingRight();
         int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(AppAdapter.tileWidthPx(inner, COLUMNS, density)), density);
-        int dockRow = itemH + (int) ((6 + 12) * density);   // item height plus DockDecoration offsets
-        int want = Math.max(0, h - dockRow - itemH * rowsBelowDockSetting - (int) (30 * density));
+        // Manga Ink: the dock is the first thing under the panels, the rest of the apps follow it.
+        int want = (int) (2 * density);
         if (grid.getPaddingTop() == want) return true;
         grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), grid.getPaddingBottom());
         return false;
@@ -1991,8 +1948,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void hideShelf() {
         if (!heroShown) return;
         heroShown = false;
-        if (heroShelf != null) heroShelf.animate().alpha(0f).setDuration(reducedMotion ? 100 : 160).start();
-        if (islamicShelf != null) islamicShelf.animate().alpha(0f).setDuration(reducedMotion ? 100 : 160).start();
+        // The wallpaper's title stays in its panel while you browse the apps below.
     }
 
     /**
@@ -2001,6 +1957,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * back up again.
      */
     private void showAmbient(int color) {
+        if (AMBIENT_ALPHA <= 0f) return;   // Manga Ink: no glow, so no glow bitmaps either
         if (!ambientShown) {
             setAmbient(color);
             ambient.animate().alpha(AMBIENT_ALPHA).setDuration(reducedMotion ? 160 : 600)
@@ -2073,8 +2030,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     // ---- system readout, auto-close, remote buttons ----------------------------------------------
 
     private static final long AUTO_CLOSE_DELAY_MS = 4000;
-    /** Wallpaper first: the selected app only lightly tints the room, so the picture keeps its colours. */
-    private static final float AMBIENT_ALPHA = 0.45f;
+    /** Manga Ink: the paper is never tinted by the selected app (the ambient glow is off). */
+    private static final float AMBIENT_ALPHA = 0f;
 
 
     /** Closes apps left in the background, a few seconds after Home is back, off the main thread. */
@@ -2093,28 +2050,86 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         scrim.setVisibility(getResources().getBoolean(R.bool.hud_grid) ? View.VISIBLE : View.GONE);
     }
 
-    /**
-     * The wallpaper's own colour becomes the accent: the selection's edge and glow, the AM/PM and the
-     * label over the wallpaper's name. Only redraws; nothing is laid out again.
-     */
-    private void applyAccent(int color) {
-        if (color == Hud.accent() && accentApplied) return;
-        accentApplied = true;
-        Hud.setAccent(color);
-        TextView ampm = findViewById(R.id.ampm);
-        if (ampm != null) ampm.setTextColor(color);
-        if (heroWhere != null) heroWhere.setTextColor(color);
-        if (glider != null) glider.invalidate();
-        View glass = findViewById(R.id.glass);
-        if (glass != null) glass.invalidate();
-        if (grid != null) grid.invalidate();
-        for (int id : new int[]{R.id.btnInputs, R.id.btnWifi, R.id.btnAssistant, R.id.btnCandyBox, R.id.btnSettings}) {
-            View pill = findViewById(id);
-            if (pill != null) pill.invalidate();
-        }
+
+    // ---- Manga Ink cards ---------------------------------------------------------------------
+
+    /** The next-prayer card: OK opens today's times and the daily verse; it hands focus like the weather card. */
+    private void setUpPrayerCard() {
+        prayerCardView = findViewById(R.id.prayerCard);
+        if (prayerCardView == null) return;
+        prayerCardView.setOnClickListener(v -> {
+            SoundEffects.playSelect();
+            Location.Zone z = Location.chosen(this);
+            showAiIslamicDialog(z != null ? z.town : "Kuala Lumpur");
+        });
+        prayerCardView.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    focusTile(COLUMNS - 1);
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    if (weatherAirQualityView != null && weatherAirQualityView.getVisibility() == View.VISIBLE) {
+                        weatherAirQualityView.requestFocus();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_UP: {
+                    View settings = findViewById(R.id.btnSettings);
+                    if (settings != null) settings.requestFocus();
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        });
+        prayerCardView.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                SoundEffects.playNav();
+                glider.hide();
+            }
+        });
+        updatePrayerCard();
     }
 
-    private boolean accentApplied;
+    private void updatePrayerCard() {
+        if (prayerCardView == null) return;
+        prayerCardView.setText(MangaCards.prayer(this, PrayerTimes.getPrayerItems(this)));
+    }
+
+    /**
+     * Up from a dock tile under the wallpaper panel: the top-bar button nearest above it, so the
+     * focus finder never lands on a card off to the side.
+     */
+    private boolean focusTopBarAbove(int position) {
+        RecyclerView.ViewHolder vh = grid.findViewHolderForAdapterPosition(position);
+        float cx;
+        if (vh != null) {
+            int[] at = new int[2];
+            vh.itemView.getLocationOnScreen(at);
+            cx = at[0] + vh.itemView.getWidth() / 2f;
+        } else {
+            cx = 0f;
+        }
+        View best = null;
+        float bestD = Float.MAX_VALUE;
+        for (int id : new int[]{R.id.btnInputs, R.id.btnWifi, R.id.btnAssistant, R.id.btnCandyBox, R.id.btnSettings}) {
+            View b = findViewById(id);
+            if (b == null || b.getVisibility() != View.VISIBLE) continue;
+            int[] at = new int[2];
+            b.getLocationOnScreen(at);
+            float d = Math.abs(at[0] + b.getWidth() / 2f - cx);
+            if (d < bestD) {
+                bestD = d;
+                best = b;
+            }
+        }
+        if (best == null) return false;
+        best.requestFocus();
+        return true;
+    }
+
     private boolean importRunning;
 
     /**
@@ -2140,7 +2155,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void updateSysReadout() {
         TextView v = findViewById(R.id.sysReadout);
-        if (v != null) v.setText(SysReadout.line(this));
+        if (v != null) v.setText(SysReadout.line(this) + "  ·  ストームズ");
     }
 
     /** Whether a voice assistant is installed and switched on (the box's own one may be disabled). */
@@ -2482,11 +2497,17 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
             if (position < COLUMNS) {
-                if (position <= 1 && weatherAirQualityView != null && weatherAirQualityView.getVisibility() == View.VISIBLE) {
+                // The two right-hand dock tiles sit under the weather and prayer cards; the rest
+                // under the wallpaper panel, so Up goes over it to the top bar.
+                if (position == COLUMNS - 2 && weatherAirQualityView != null && weatherAirQualityView.getVisibility() == View.VISIBLE) {
                     weatherAirQualityView.requestFocus();
                     return true;
                 }
-                return false;          // dock row: let focus move to the top bar
+                if (position == COLUMNS - 1 && prayerCardView != null && prayerCardView.getVisibility() == View.VISIBLE) {
+                    prayerCardView.requestFocus();
+                    return true;
+                }
+                return focusTopBarAbove(position);
             }
             target = position - COLUMNS;
         } else {
@@ -2554,7 +2575,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (last != null) {
             showHomeWeather(last);
         } else if (weatherAirQualityView != null) {
-            weatherAirQualityView.setText(WeatherAirQuality.getFormatted(this));
+            weatherAirQualityView.setText(MangaCards.weather(this, WeatherAirQuality.getFormatted(this).toString(), "", 0));
         }
         updateHomeWeather();
     }
@@ -2577,25 +2598,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private void showHomeWeather(HomeWeather.Line line) {
         if (weatherAirQualityView == null) return;
         if (line == null) {
-            weatherAirQualityView.setText(WeatherAirQuality.getFormatted(this));
+            weatherAirQualityView.setText(MangaCards.weather(this, WeatherAirQuality.getFormatted(this).toString(), "", 0));
             return;
         }
-        String sep = line.weather.isEmpty() || line.api.isEmpty() ? "" : "     ·     ";
-        android.text.SpannableString text = new android.text.SpannableString(line.weather + sep + line.api);
-        if (!line.api.isEmpty()) {
-            text.setSpan(new android.text.style.ForegroundColorSpan(line.apiColor), text.length() - line.api.length(),
-                    text.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        weatherAirQualityView.setText(text);
-        if (line.icon != 0) {
-            Drawable d = getDrawable(line.icon);
-            int px = Math.round(20 * density);
-            d.setBounds(0, 0, px, px);
-            weatherAirQualityView.setCompoundDrawables(d, null, null, null);
-            weatherAirQualityView.setCompoundDrawablePadding(Math.round(8 * density));
-        } else {
-            weatherAirQualityView.setCompoundDrawables(null, null, null, null);
-        }
+        weatherAirQualityView.setText(MangaCards.weather(this, line.weather, line.api, line.apiColor));
         updateWeatherOverlay(line);
     }
 
@@ -2614,8 +2620,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 }
             } catch (Exception ignored) {}
 
-            int idx = (wallView != null) ? root.indexOfChild(wallView) + 1 : 0;
-            root.addView(weatherOverlayView, idx, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            FrameLayout panel = wallPanel();
+            int idx = (wallView != null && wallView.getParent() == panel) ? panel.indexOfChild(wallView) + 1 : 0;
+            panel.addView(weatherOverlayView, idx, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             weatherOverlayView.setVisibility(View.GONE);
         }
     }
@@ -2669,6 +2676,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     private void updateIslamicShelf() {
+        updatePrayerCard();
         if (islamicShelf == null) return;
 
         if (WeeklyAyah.shown(this)) {
@@ -2768,6 +2776,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         if (ampmView != null) ampmView.setText(period);
         if (dateView != null) dateView.setText(dateStr);
+        TextView kanji = findViewById(R.id.dayKanji);
+        if (kanji != null) kanji.setText(MangaCards.weekdayKanji(dow));
     }
 
     /** Shows the Wi-Fi network name on the button when we can read it, otherwise the connection type. */
@@ -2933,11 +2943,13 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
         // Row 5: Doa Harian / Ayat Pilihan
         boolean ayahShown = WeeklyAyah.shown(this);
-        addInputRow(rows, close, R.drawable.ic_salat, "Daily verse: " + (ayahShown ? "ON" : "OFF"), -1, () -> {
+        addInputRow(rows, close, R.drawable.ic_salat, "Daily verse & prayer times", -1, () -> {
             SoundEffects.playSelect();
-            WeeklyAyah.setShown(this, !ayahShown);
-            showAyah(WeeklyAyah.last(this));
-            if (!ayahShown) updateAyah();
+            closeMenu(false);
+            if (!ayahShown) WeeklyAyah.setShown(this, true);
+            updateAyah();
+            Location.Zone z = Location.chosen(this);
+            showAiIslamicDialog(z != null ? z.town : "Kuala Lumpur");
         });
 
         // Row 6: Sound Effects
@@ -4907,7 +4919,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void showAiIslamicDialog(String town) {
         WeeklyAyah.Ayah ayah = WeeklyAyah.last(this);
-        String ayahTxt = (ayah != null) ? (ayah.arabic + "\n\n\"" + ayah.malay + "\"\n(" + ayah.reference + ")") : "No verse today.";
+        String tr = (ayah != null) ? ayah.translation(WeeklyAyah.english(this)) : null;
+        String ayahTxt = (ayah != null) ? (ayah.arabic + "\n\n\"" + (tr != null ? tr : "") + "\"\n(" + ayah.reference + ")") : "No verse today.";
         AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_TvHome_GlassDialog)
                 .setTitle("🕌 Today's prayer times & verse")
                 .setMessage("📍 JAKIM zone: " + town + "  •  " + PrayerTimes.getHijriDate() + "\n\n"
@@ -5848,7 +5861,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * the menu is above), or Back, closes it and the shape glides back to the anchor.
      */
     private void showMenu(FrameLayout panel, LinearLayout rows, View anchor, int width, boolean above) {
-        GlassDrawable glass = new GlassDrawable(panel, 8 * density, density, glider, 0.5f, true);
+        GlassDrawable glass = new GlassDrawable(panel, 0f, density, glider, 0.5f, true);
         panel.setBackground(glass);
         Backdrop.watch(panel);
         glider.addCompanion(panel);
@@ -5983,7 +5996,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private PopupWindow glassPopup(View panel, int width) {
         // The same glass as the pills and the tray: what is behind it, softened, with a shining edge.
-        panel.setBackground(new GlassDrawable(panel, 8 * density, density, null, 0.5f));
+        panel.setBackground(new GlassDrawable(panel, 0f, density, null, 0.5f));
         Backdrop.watch(panel);
         final PopupWindow popup = new PopupWindow(panel, width, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));   // needed for Back to dismiss

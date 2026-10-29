@@ -368,6 +368,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         h.card.setScaleX(focused ? FOCUS_SCALE : 1f);
         h.card.setScaleY(focused ? FOCUS_SCALE : 1f);
         h.card.setBackgroundResource(e.kind == Entry.ADD_SLOT ? R.drawable.tile_add_bg : R.drawable.tile_bg);
+        // The ink line goes over the app's picture; an empty slot has its own dashed one.
+        h.card.setForeground(e.kind == Entry.ADD_SLOT ? null : h.card.getContext().getDrawable(R.drawable.tile_frame));
         if (e.banner != null) {
             h.banner.setImageDrawable(e.banner);
             h.banner.setVisibility(View.VISIBLE);
@@ -637,9 +639,9 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         return Color.HSVToColor(hsv);
     }
 
-    /** Corner radius for a tile of this width: 10dp at the design width, less when smaller. */
+    /** Corner radius for a tile: none. Manga Ink panels are square, drawn with an ink line. */
     static float cornerRadius(int tileWidthPx, float density) {
-        return 10f * density * Math.min(1f, tileWidthPx / (DESIGN_W_DP * density));
+        return 0f;
     }
 
     static final class Holder extends RecyclerView.ViewHolder {

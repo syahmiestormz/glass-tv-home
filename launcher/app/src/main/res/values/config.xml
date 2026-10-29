@@ -83,7 +83,7 @@
          here or with "reduced_motion": true in a theme's config.json; false keeps the normal motion. -->
     <bool name="reduced_motion">true</bool>
 
-    <!-- Wallpaper first: black fades at the top and bottom of the picture, behind the clock and the dock.
-         false: the plain picture. -->
-    <bool name="hud_grid">true</bool>
+    <!-- Former full-screen fades over the wallpaper. Manga Ink keeps the picture in its own panel on the
+         paper, so they stay off. -->
+    <bool name="hud_grid">false</bool>
 </resources>

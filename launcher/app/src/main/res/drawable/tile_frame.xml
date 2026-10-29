@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The ink line around an app tile, over its picture; red when selected (the hard shadow behind is the Glider). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="4dp" android:color="#FFD62839" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:width="3dp" android:color="#FFF3EFE6" />
+        </shape>
+    </item>
+</selector>

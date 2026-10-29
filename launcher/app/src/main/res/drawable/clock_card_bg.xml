@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The clock card: cream paper with a hard red shadow, 8dp down and right. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:left="8dp" android:top="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFD62839" />
+        </shape>
+    </item>
+    <item android:right="8dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF3EFE6" />
+        </shape>
+    </item>
+</layer-list>

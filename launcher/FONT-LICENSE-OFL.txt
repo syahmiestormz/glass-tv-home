@@ -1,10 +1,13 @@
-Copyright 2020 The Space Grotesk Project Authors (https://github.com/floriankarsten/space-grotesk)
-(Space Grotesk is Stormz TV's typeface, app/src/main/res/font/hud_*.ttf, a Latin subset converted from @fontsource/space-grotesk.)
+Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
+(Inter is Stormz TV's text typeface, app/src/main/res/font/hud_*.ttf, a Latin subset converted from @fontsource/inter.)
+
+Copyright 2020 The Anton Project Authors (https://github.com/googlefonts/AntonFont)
+(Anton is Stormz TV's display typeface for the clock and titles, app/src/main/res/font/display.ttf, a Latin subset converted from @fontsource/anton.)
 
 Copyright 2018 The Chakra Petch Project Authors (https://github.com/m4rc1e/Chakra-Petch)
 (Chakra Petch is the installer's typeface, installer/src/main/res/font/hud_*.ttf, a Latin subset converted from @fontsource/chakra-petch.)
 
-Both fonts are used under the same licence:
+All three fonts are used under the same licence:
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

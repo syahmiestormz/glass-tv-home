@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Manga Ink, dark: near-black paper with a faint screentone of cream dots. One small tiled bitmap. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/paper_dot"
+    android:tileMode="repeat"
+    android:antialias="false"
+    android:filter="false" />

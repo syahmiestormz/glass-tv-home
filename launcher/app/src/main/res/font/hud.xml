@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Stormz TV's typeface: Space Grotesk (The Space Grotesk Project Authors, SIL Open Font License 1.1,
-     see launcher/FONT-LICENSE-OFL.txt), Latin subset. Glyphs it lacks fall back to the system font. -->
+<!-- Stormz TV's text typeface: Inter (The Inter Project Authors, SIL Open Font License 1.1, see
+     launcher/FONT-LICENSE-OFL.txt), Latin subset, 400 to 800. The clock and titles use Anton
+     (@font/display). Glyphs they lack, such as kana and kanji, fall back to the system font. -->
 <font-family xmlns:android="http://schemas.android.com/apk/res/android">
     <font android:fontStyle="normal" android:fontWeight="300" android:font="@font/hud_light" />
     <font android:fontStyle="normal" android:fontWeight="400" android:font="@font/hud_regular" />

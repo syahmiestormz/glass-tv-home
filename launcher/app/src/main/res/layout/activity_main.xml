@@ -1,96 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Manga Ink (dark): ink-lined panels on near-black screentone paper. The wallpaper sits in the big
+     panel, with its name; the clock, weather and next prayer in cards beside it; the top bar above;
+     the dock and the rest of the apps below. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:background="#FF000000">
+    android:background="@drawable/paper">
 
-    <!-- Ambient glow in the colour of the focused dock app. -->
+    <!-- Ambient glow in the colour of the focused app: off in this look (AMBIENT_ALPHA). -->
     <View
         android:id="@+id/ambient"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0" />
 
-    <!-- Black fades at the top and bottom of the wallpaper, behind the clock and the dock. -->
+    <!-- Former full-screen fades; the paper needs none (config.xml hud_grid). -->
     <View
         android:id="@+id/hudGrid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/scrim"
+        android:visibility="gone"
         android:importantForAccessibility="no" />
 
-    <!-- Top shelf: the place's name, its country and what it is about, positioned above the dock in code.
-         The width is capped in code to a share of the space between the side paddings, so the
-         description wraps in a column instead of running the width of the screen. -->
-    <LinearLayout
-        android:id="@+id/heroShelf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="55dp"
-        android:orientation="vertical"
-        android:alpha="0">
-
-        <TextView
-            android:id="@+id/heroName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFFFF"
-            android:textSize="36sp"
-            android:fontFamily="@font/hud_semibold"
-            android:letterSpacing="-0.02"
-            android:includeFontPadding="false"
-            android:lineSpacingMultiplier="0.75"
-            android:shadowColor="#99000000"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="5"
-            android:maxLines="1"
-            android:ellipsize="end" />
-
-        <!-- The country/state close under the name, and the description a little further below it. -->
-        <TextView
-            android:id="@+id/heroWhere"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="#E6FFFFFF"
-            android:textSize="13sp"
-            android:fontFamily="@font/hud"
-            android:fontVariationSettings="'wght' 600"
-            android:letterSpacing="0.18"
-            android:textAllCaps="true"
-            android:includeFontPadding="false"
-            android:shadowColor="#99000000"
-            android:shadowDx="0"
-            android:shadowDy="1"
-            android:shadowRadius="4"
-            android:singleLine="true"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/heroDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="#CCFFFFFF"
-            android:textSize="14sp"
-            android:fontFamily="@font/hud"
-            android:fontVariationSettings="'wght' 400"
-            android:lineSpacingExtra="2dp"
-            android:includeFontPadding="false"
-            android:shadowColor="#99000000"
-            android:shadowDx="0"
-            android:shadowDy="1"
-            android:shadowRadius="4"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <!-- Right shelf: Waktu Solat Table matching bravia-glass-tv UI -->
+    <!-- The old verse and prayer-table shelf: kept for the code that fills it, never shown in the Manga Ink
+         layout (the prayer card shows the next prayer; the verse is in Settings → Daily verse). -->
     <LinearLayout
         android:id="@+id/islamicShelf"
         android:layout_width="wrap_content"
@@ -99,7 +35,8 @@
         android:layout_marginEnd="56dp"
         android:orientation="vertical"
         android:gravity="end"
-        android:alpha="1">
+        android:visibility="gone"
+        android:alpha="0">
 
         <!-- Ayat / Doa Harian (WeeklyAyah) matching bravia-glass-tv UI -->
         <LinearLayout
@@ -399,176 +336,197 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingStart="56dp"
-        android:paddingEnd="56dp"
-        android:paddingTop="26dp"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:paddingTop="18dp"
         android:clipChildren="false"
         android:clipToPadding="false">
 
+        <!-- Top bar: the menu buttons on the left, the system readout on the right. -->
         <RelativeLayout
+            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
-            <!-- Top Row: Clock & Date on Left, Menu Buttons on Right (SEBARIS DENGAN MASA) -->
             <LinearLayout
-                android:id="@+id/leftBlock"
+                android:id="@+id/topButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/topButtons"
-                android:layout_marginEnd="16dp"
-                android:orientation="horizontal"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="-10dp"
                 android:gravity="center_vertical"
-                android:baselineAligned="false">
+                android:orientation="horizontal">
 
-                <TextClock
-                    android:id="@+id/clock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:format12Hour="h:mm"
-                    android:format24Hour="HH:mm"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="88sp"
-                    android:fontFamily="@font/hud_light"
-                    android:letterSpacing="-0.04"
-                    android:shadowColor="#66000000"
-                    android:shadowDx="0"
-                    android:shadowDy="2"
-                    android:shadowRadius="12"
-                    android:includeFontPadding="false" />
+                <TextView
+                    android:id="@+id/btnInputs"
+                    style="@style/TopMenuButton"
+                    android:text="@string/inputs"
+                    android:drawableStart="@drawable/ic_input" />
 
-                <!-- 1:2 layout: 1 jam on left, 2 stacked rows on right (atas: am/pm, bawah: tarikh) -->
-                <LinearLayout
-                    android:id="@+id/dateBlock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
+                <TextView
+                    android:id="@+id/btnWifi"
+                    style="@style/TopMenuButton"
+                    android:maxWidth="180dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:text="@string/wifi"
+                    android:drawableStart="@drawable/ic_wifi" />
 
-                    <!-- Atas: AM/PM (e.g. PG / PTG / MLM) -->
-                    <TextView
-                        android:id="@+id/ampm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:includeFontPadding="false"
-                        android:textColor="#FFFF5A7A"
-                        android:textSize="13sp"
-                        android:fontFamily="@font/hud_semibold"
-                        android:letterSpacing="0.22"
-                        android:shadowColor="#80000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:textAllCaps="true" />
+                <TextView
+                    android:id="@+id/btnAssistant"
+                    style="@style/TopMenuButton"
+                    android:layout_width="42dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
+                    android:drawablePadding="0dp"
+                    android:contentDescription="Google Assistant"
+                    android:drawableStart="@drawable/ic_mic" />
 
-                    <!-- Bawah: Tarikh (e.g. 23 OKT 2026) -->
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:includeFontPadding="false"
-                        android:textColor="#F2FFFFFF"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/hud_medium"
-                        android:letterSpacing="0.16"
-                        android:shadowColor="#80000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:textAllCaps="true" />
+                <TextView
+                    android:id="@+id/btnCandyBox"
+                    style="@style/TopMenuButton"
+                    android:layout_width="42dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
+                    android:drawablePadding="0dp"
+                    android:contentDescription="Candy Box"
+                    android:drawableStart="@drawable/ic_candy_box" />
 
-                    <!-- Stormz TV tag in katakana: the neon-anime touch. The box's CJK font draws it. -->
-                    <TextView
-                        android:id="@+id/stormzTag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:includeFontPadding="false"
-                        android:text="ストームズ  ·  STORMZ TV"
-                        android:textColor="#8CFFFFFF"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.12"
-                        android:shadowColor="#80000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3" />
-
-                    <!-- Shamsi date ("27 Mehr 1405"), shown when shamsi_date is on. -->
-                    <TextView
-                        android:id="@+id/shamsiDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:singleLine="true"
-                        android:ellipsize="end"
-                        android:textColor="#E6FFFFFF"
-                        android:textSize="13sp"
-                        android:fontFamily="@font/hud"
-                        android:fontVariationSettings="'wght' 500"
-                        android:letterSpacing="0.02"
-                        android:includeFontPadding="false"
-                        android:visibility="gone" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/btnSettings"
+                    style="@style/TopMenuButton"
+                    android:layout_width="42dp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="0dp"
+                    android:drawablePadding="0dp"
+                    android:contentDescription="@string/settings"
+                    android:drawableStart="@drawable/ic_settings" />
             </LinearLayout>
 
-            <!-- Bawah Jam: Weather plus Haze API (clickable & focusable pill to open WeatherActivity) -->
-            <TextView
-                android:id="@+id/weatherAirQuality"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/leftBlock"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="10dp"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="@drawable/weather_pill_bg"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"
-                android:includeFontPadding="false"
-                android:textColor="#FFFFFFFF"
-                android:textSize="14sp"
-                android:fontFamily="@font/hud"
-                android:fontVariationSettings="'wght' 500"
-                android:shadowColor="#99000000"
-                android:shadowDx="0"
-                android:shadowDy="1"
-                android:shadowRadius="3"
-                android:singleLine="true" />
-
-            <!-- System readout: memory, free storage and Wi-Fi, refreshed with the clock while Home shows. -->
+            <!-- System readout: memory and free storage, refreshed with the clock while Home shows. -->
             <TextView
                 android:id="@+id/sysReadout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/weatherAirQuality"
-                android:layout_alignTop="@id/weatherAirQuality"
-                android:layout_alignBottom="@id/weatherAirQuality"
-                android:layout_marginStart="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/topButtons"
+                android:layout_marginStart="16dp"
+                android:gravity="end"
                 android:focusable="false"
-                android:gravity="center_vertical"
-                android:background="@drawable/info_pill_bg"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
                 android:includeFontPadding="false"
-                android:textColor="#D9FFFFFF"
-                android:textSize="13sp"
-                android:fontFamily="@font/hud"
-                android:letterSpacing="0.04"
-                android:singleLine="true" />
+                android:textColor="#CCF3EFE6"
+                android:textSize="12sp"
+                android:fontFamily="@font/hud_bold"
+                android:letterSpacing="0.24"
+                android:textAllCaps="true"
+                android:singleLine="true"
+                android:ellipsize="end" />
 
-            <!-- Now Playing Widget Card: Matching bravia-glass-tv design -->
+            <!-- Fallback Prayer Times view -->
+            <TextView
+                android:id="@+id/prayerTimes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/topButtons"
+                android:layout_alignParentStart="true"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <!-- The panels: wallpaper on the left, clock, weather and next prayer on the right. -->
+        <LinearLayout
+            android:id="@+id/panels"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- The wallpaper panel. The picture (and the weather effects over it) are added in code,
+                 under the fade and the title; the ink line is the foreground, over all of them. -->
+            <FrameLayout
+                android:id="@+id/wallPanel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="700"
+                android:background="#FF111111"
+                android:foreground="@drawable/wall_panel_frame">
+
+                <View
+                    android:id="@+id/heroFade"
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/hero_fade"
+                    android:importantForAccessibility="no" />
+
+                <!-- The picture's name: the episode line above, the title in Anton, a short line below. -->
+                <LinearLayout
+                    android:id="@+id/heroShelf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginEnd="28dp"
+                    android:layout_marginBottom="22dp"
+                    android:orientation="vertical"
+                    android:alpha="0">
+
+                    <TextView
+                        android:id="@+id/heroWhere"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:textColor="#FFFF4B5C"
+                        android:textSize="15sp"
+                        android:fontFamily="@font/hud_bold"
+                        android:letterSpacing="0.24"
+                        android:textAllCaps="true"
+                        android:includeFontPadding="false"
+                        android:singleLine="true"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/heroName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFF3EFE6"
+                        android:textSize="46sp"
+                        android:fontFamily="@font/display"
+                        android:letterSpacing="0.01"
+                        android:textAllCaps="true"
+                        android:includeFontPadding="false"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                    <TextView
+                        android:id="@+id/heroDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#D9D8D2C4"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/hud_regular"
+                        android:lineSpacingExtra="2dp"
+                        android:includeFontPadding="false"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:visibility="gone" />
+                </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/nowPlayingCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="64dp"
-                android:layout_below="@id/weatherAirQuality"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="12dp"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="18dp"
                 android:focusable="false"
                 android:visibility="gone"
                 android:background="@drawable/glass_panel"
@@ -704,73 +662,187 @@
                         android:nextFocusLeft="@+id/btnInlineNext" />
                 </LinearLayout>
             </LinearLayout>
+            </FrameLayout>
 
-            <!-- Top Menu Buttons: Strictly in the same row, vertically centered with the clock -->
+            <Space
+                android:layout_width="24dp"
+                android:layout_height="match_parent" />
+
             <LinearLayout
-                android:id="@+id/topButtons"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@id/leftBlock"
-                android:layout_alignBottom="@id/leftBlock"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="476"
+                android:orientation="vertical"
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
-                <TextView
-                    android:id="@+id/btnInputs"
-                    style="@style/TopMenuButton"
-                    android:text="@string/inputs"
-                    android:drawableStart="@drawable/ic_input" />
+                <!-- Clock card: cream paper, hard red shadow. -->
+                <LinearLayout
+                    android:id="@+id/leftBlock"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/clock_card_bg"
+                    android:orientation="vertical"
+                    android:paddingStart="22dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="30dp"
+                    android:paddingBottom="22dp">
 
-                <TextView
-                    android:id="@+id/btnWifi"
-                    style="@style/TopMenuButton"
-                    android:maxWidth="180dp"
-                    android:singleLine="true"
-                    android:ellipsize="end"
-                    android:text="@string/wifi"
-                    android:drawableStart="@drawable/ic_wifi" />
+                    <LinearLayout
+                        android:id="@+id/dateBlock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/btnAssistant"
-                    style="@style/TopMenuButton"
-                    android:layout_width="42dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="0dp"
-                    android:drawablePadding="0dp"
-                    android:contentDescription="Google Assistant"
-                    android:drawableStart="@drawable/ic_mic" />
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:includeFontPadding="false"
+                            android:textColor="#FF111111"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/hud_bold"
+                            android:letterSpacing="0.24"
+                            android:textAllCaps="true"
+                            android:singleLine="true" />
 
-                <TextView
-                    android:id="@+id/btnCandyBox"
-                    style="@style/TopMenuButton"
-                    android:layout_width="42dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="0dp"
-                    android:drawablePadding="0dp"
-                    android:contentDescription="Candy Box"
-                    android:drawableStart="@drawable/ic_candy_box" />
+                        <!-- The weekday in Japanese (木曜日), on a red tag. -->
+                        <TextView
+                            android:id="@+id/dayKanji"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/kanji_tag_bg"
+                            android:paddingStart="9dp"
+                            android:paddingEnd="9dp"
+                            android:paddingTop="3dp"
+                            android:paddingBottom="4dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#FFFFFFFF"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1" />
+                    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/btnSettings"
-                    style="@style/TopMenuButton"
-                    android:layout_width="42dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="0dp"
-                    android:drawablePadding="0dp"
-                    android:contentDescription="@string/settings"
-                    android:drawableStart="@drawable/ic_settings" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="true"
+                        android:orientation="horizontal">
+
+                        <TextClock
+                            android:id="@+id/clock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:format12Hour="h:mm"
+                            android:format24Hour="HH:mm"
+                            android:textColor="#FF111111"
+                            android:textSize="84sp"
+                            android:fontFamily="@font/display"
+                            android:letterSpacing="0.02"
+                            android:includeFontPadding="false" />
+
+                        <TextView
+                            android:id="@+id/ampm"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#FF111111"
+                            android:textSize="30sp"
+                            android:fontFamily="@font/display"
+                            android:textAllCaps="true" />
+
+                        <!-- Shamsi date ("27 Mehr 1405"), shown when shamsi_date is on. -->
+                        <TextView
+                            android:id="@+id/shamsiDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            android:textColor="#FF111111"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/hud_medium"
+                            android:includeFontPadding="false"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/stormzTag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ストームズ"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="14dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:clipChildren="false">
+
+                    <!-- Weather card: opens the weather screen. Filled in code (WEATHER, the temperature, the sky and the haze). -->
+                    <TextView
+                        android:id="@+id/weatherAirQuality"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="@drawable/ink_card_bg"
+                        android:gravity="top|start"
+                        android:paddingStart="18dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="22dp"
+                        android:paddingBottom="18dp"
+                        android:includeFontPadding="false"
+                        android:textColor="#FFF3EFE6"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/hud_medium"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="4" />
+
+                    <Space
+                        android:layout_width="14dp"
+                        android:layout_height="match_parent" />
+
+                    <!-- Next prayer card: OK opens today's prayer times and the daily verse. -->
+                    <TextView
+                        android:id="@+id/prayerCard"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="@drawable/ink_card_bg"
+                        android:gravity="top|start"
+                        android:paddingStart="18dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="22dp"
+                        android:paddingBottom="18dp"
+                        android:includeFontPadding="false"
+                        android:textColor="#FFF3EFE6"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/hud_medium"
+                        android:lineSpacingExtra="2dp"
+                        android:maxLines="5" />
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- Fallback Prayer Times view -->
-            <TextView
-                android:id="@+id/prayerTimes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/weatherAirQuality"
-                android:layout_alignParentStart="true"
-                android:visibility="gone" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <!-- The wrapper clips at the grid's edge; the grid itself must not clip so scaled tiles can overflow their cells. -->
         <com.syahmie.stormztv.FadeTopFrame
@@ -796,7 +868,7 @@
         </com.syahmie.stormztv.FadeTopFrame>
     </LinearLayout>
 
-    <!-- The single floating glass highlight that springs between tiles. -->
+    <!-- The single floating highlight that springs between tiles. -->
     <com.syahmie.stormztv.GlassView
         android:id="@+id/glass"
         android:layout_width="10dp"

@@ -23,7 +23,7 @@ public class GlassView extends View {
         super(context, attrs);
         density = getResources().getDisplayMetrics().density;
         radius = 20f * density;
-        // The selection's edge, in the wallpaper's accent.
+        // The selection's edge: Manga Ink red.
         rim = new GlassRim(2f * density, Hud.RIM_SHINE, Hud.RIM_FAINT);
         rim.paint.setShader(null);
         // Cache the slab as a texture. The spring only changes translation, so the GPU can
@@ -44,7 +44,7 @@ public class GlassView extends View {
         float inset = 6f * density;
         rect.set(inset, inset, getWidth() - inset, getHeight() - inset);
         // A rim only: the slab sits on top of the tile, so any fill would wash the app out.
-        rim.paint.setColor(Hud.accent());
+        rim.paint.setColor(Hud.RED);
         canvas.drawRoundRect(rect, radius, radius, rim.paint);
     }
 }
